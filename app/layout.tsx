@@ -35,7 +35,7 @@ export default function RootLayout({
         <ThemeProvider>
           <JsonProvider>
             <ToastProvider />
-            <div id="app-root" className="min-h-dvh pb-16">
+            <div id="app-root" className="min-h-dvh">
               {/* Dynamic glass background */}
               <div aria-hidden className="dynamic-bg">
                 <div className="bg-glow a" />

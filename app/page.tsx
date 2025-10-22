@@ -51,10 +51,10 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-dvh bg-background font-sans flex flex-col">
+    <div className="relative font-sans flex flex-col justify-between">
 
       {/* Hero */}
-      <main className="mx-auto w-full max-w-6xl px-4 flex-1">
+      <main className="mx-auto w-full max-w-6xl px-4 flex-1 mt-4">
         <section className="relative overflow-hidden rounded-xl border bg-card px-6 py-14 text-center md:px-12">
           <motion.h1
             className="mx-auto max-w-3xl text-3xl font-semibold tracking-tight md:text-4xl"
@@ -154,10 +154,10 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto py-8">
+      <footer className="mt-24">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-4 text-center text-sm md:flex-row md:text-left">
           <div className="text-muted-foreground">
-            © {new Date().getFullYear()} JSON Studio
+            © {new Date().getFullYear()} JSON Studio, Crafted by Kenneth Olivas
           </div>
           <div className="flex items-center gap-4">
             <a
@@ -167,20 +167,6 @@ export default function Home() {
               rel="noreferrer"
             >
               GitHub
-            </a>
-            <a
-              className="text-muted-foreground hover:text-foreground"
-              href="https://x.com/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Twitter
-            </a>
-            <a
-              className="text-muted-foreground hover:text-foreground"
-              href="mailto:contact@example.com"
-            >
-              Contact
             </a>
           </div>
           <div className="text-muted-foreground">
