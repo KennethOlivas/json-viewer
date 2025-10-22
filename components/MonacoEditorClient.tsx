@@ -3,9 +3,20 @@
 import dynamic from "next/dynamic";
 import type { OnChange } from "@monaco-editor/react";
 
-const Monaco = dynamic(async () => (await import("@monaco-editor/react")).default, { ssr: false });
+const Monaco = dynamic(
+  async () => (await import("@monaco-editor/react")).default,
+  { ssr: false },
+);
 
-export function MonacoEditorClient({ value, onChangeAction, height = "60vh" }: { value: string; onChangeAction?: OnChange; height?: string }) {
+export function MonacoEditorClient({
+  value,
+  onChangeAction,
+  height = "60vh",
+}: {
+  value: string;
+  onChangeAction?: OnChange;
+  height?: string;
+}) {
   return (
     <Monaco
       height={height}

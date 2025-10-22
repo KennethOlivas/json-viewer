@@ -1,7 +1,7 @@
 # JSON Viewer & Editor — Next.js app
 
 A modern, animated JSON viewer/editor with routes for tree view, raw editor (Monaco), formatter, search, theme, sessions, compare, convert, and a basic graph view. Built with Next.js App Router, Tailwind CSS v4, ShadCN (Radix), and small utilities.
- 
+
 ## Features
 
 - Tree View: inline edit, simple expand/collapse per node, keyboard undo/redo (Ctrl/Cmd+Z/Shift+Z)
@@ -35,9 +35,8 @@ pnpm dev
 pnpm build; pnpm start
 ```
 
- 
 ## Routes
- 
+
 - / — hub with links
 - /tree-view — expandable tree with inline edit and session save
 - /raw-view — Monaco editor, format/minify/copy/save
@@ -49,7 +48,6 @@ pnpm build; pnpm start
 - /convert — JSON↔YAML↔CSV converter
 - /graph-view — basic visual cards (placeholder for interactive graph)
 
- 
 ## Notes
 
 - Data persists to localStorage under the json-viewer: prefix.

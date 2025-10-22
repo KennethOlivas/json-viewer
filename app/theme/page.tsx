@@ -13,7 +13,9 @@ export default function ThemePage() {
         <div className="mb-2 text-sm text-muted-foreground">Live preview</div>
         <div className="rounded border bg-card p-4 shadow">
           <h2 className="text-lg font-medium">Preview card</h2>
-          <p className="text-muted-foreground">This area previews colors and border radii.</p>
+          <p className="text-muted-foreground">
+            This area previews colors and border radii.
+          </p>
         </div>
       </div>
     </div>

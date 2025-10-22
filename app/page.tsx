@@ -15,7 +15,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -25,7 +24,6 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import {
-  Braces,
   Menu,
   TreeDeciduous,
   Code2,
@@ -34,38 +32,10 @@ import {
   Repeat2,
   Network,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-function Logo({ className }: { className?: string }) {
-  return (
-    <motion.div
-      className={cn("flex items-center gap-2", className)}
-      initial={{ opacity: 0, y: -6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <motion.div
-        className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10 text-primary"
-        initial={{ rotate: -8, scale: 0.9 }}
-        animate={{ rotate: 0, scale: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 15 }}
-      >
-        <Braces className="h-5 w-5" />
-      </motion.div>
-      <span className="text-base font-semibold">JSON Studio</span>
-    </motion.div>
-  );
-}
-
-const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/tree-view", label: "Tree View" },
-  { href: "/raw-view", label: "Raw View" },
-  { href: "/formatter", label: "Formatter" },
-  { href: "/compare", label: "Compare" },
-  { href: "/convert", label: "Convert" },
-  { href: "/graph-view", label: "Graph View" },
-];
+import { navItems } from "@/const/navItem";
+import { Logo } from "@/components/Logo";
+import { FeatureCard } from "@/components/FeatureCard";
 
 export default function Home() {
   const featuresRef = useRef<HTMLDivElement | null>(null);
@@ -147,7 +117,7 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-  <main className="mx-auto w-full max-w-6xl px-4 flex-1">
+      <main className="mx-auto w-full max-w-6xl px-4 flex-1">
         <section className="relative overflow-hidden rounded-xl border bg-card px-6 py-14 text-center md:px-12">
           <motion.h1
             className="mx-auto max-w-3xl text-3xl font-semibold tracking-tight md:text-4xl"
@@ -247,7 +217,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-  <footer className="mt-auto py-8">
+      <footer className="mt-auto py-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-4 text-center text-sm md:flex-row md:text-left">
           <div className="text-muted-foreground">
             © {new Date().getFullYear()} JSON Studio
@@ -282,37 +252,5 @@ export default function Home() {
         </div>
       </footer>
     </div>
-  );
-}
-
-function FeatureCard({
-  href,
-  title,
-  Icon,
-  children,
-}: {
-  href: string;
-  title: string;
-  Icon: React.ComponentType<{ className?: string }>;
-  children: React.ReactNode;
-}) {
-  return (
-    <motion.div
-      whileHover={{ y: -2, scale: 1.01 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-    >
-      <VTLink href={href} className="block">
-        <Card className="h-full cursor-pointer border bg-card transition-colors">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Icon className="h-4 w-4" /> {title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
-            {children}
-          </CardContent>
-        </Card>
-      </VTLink>
-    </motion.div>
   );
 }

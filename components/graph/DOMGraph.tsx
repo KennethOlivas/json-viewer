@@ -2,10 +2,20 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSONValue, JsonPath } from "@/lib/json";
-import { forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from "d3-force";
+import {
+  forceSimulation,
+  forceLink,
+  forceManyBody,
+  forceCenter,
+  forceCollide,
+} from "d3-force";
 import { motion } from "framer-motion";
 import { getAtPath } from "@/lib/json";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type DOMGraphNode = {
   id: string;
@@ -35,7 +45,10 @@ function colorForType(type: DOMGraphNode["type"]): string {
   }
 }
 
-function toGraph(root: JSONValue): { nodes: DOMGraphNode[]; links: DOMGraphLink[] } {
+function toGraph(root: JSONValue): {
+  nodes: DOMGraphNode[];
+  links: DOMGraphLink[];
+} {
   const nodes: DOMGraphNode[] = [];
   const links: DOMGraphLink[] = [];
 
@@ -43,17 +56,21 @@ function toGraph(root: JSONValue): { nodes: DOMGraphNode[]; links: DOMGraphLink[
     const type: DOMGraphNode["type"] = Array.isArray(v)
       ? "array"
       : v === null
-      ? "null"
-      : typeof v === "object"
-      ? "object"
-      : (typeof v as DOMGraphNode["type"]);
+        ? "null"
+        : typeof v === "object"
+          ? "object"
+          : (typeof v as DOMGraphNode["type"]);
     const id = path.join("/") || "root";
     nodes.push({ id, label, type, path: [...path] });
     return id;
   };
 
   const walk = (v: JSONValue, path: JsonPath = [], parentId?: string) => {
-    const id = pushNode(path, v, path.length ? String(path[path.length - 1]) : "root");
+    const id = pushNode(
+      path,
+      v,
+      path.length ? String(path[path.length - 1]) : "root",
+    );
     if (parentId) links.push({ source: parentId, target: id });
 
     if (Array.isArray(v)) {
@@ -85,7 +102,10 @@ export function DOMGraph({
   extraLinks,
 }: {
   value: JSONValue;
-  onNodeContextAction?: (node: DOMGraphNode, position: { x: number; y: number }) => void;
+  onNodeContextAction?: (
+    node: DOMGraphNode,
+    position: { x: number; y: number },
+  ) => void;
   onNodeLongPressAction?: (node: DOMGraphNode) => void;
   onNodeHoverAction?: (node: DOMGraphNode | null) => void;
   onGraphRefAction?: (api: DOMGraphApi) => void;
@@ -104,13 +124,22 @@ export function DOMGraph({
   }, [base, extraLinks]);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [dims, setDims] = useState<{ w: number; h: number }>({ w: 800, h: 600 });
+  const [dims, setDims] = useState<{ w: number; h: number }>({
+    w: 800,
+    h: 600,
+  });
   const [k, setK] = useState(1);
   const [tx, setTx] = useState(0);
   const [ty, setTy] = useState(0);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [nodes, setNodes] = useState<DOMGraphNode[]>([]);
-  const [tip, setTip] = useState<{ open: boolean; x: number; y: number; type?: string; children?: number }>(() => ({ open: false, x: 0, y: 0 }));
+  const [tip, setTip] = useState<{
+    open: boolean;
+    x: number;
+    y: number;
+    type?: string;
+    children?: number;
+  }>(() => ({ open: false, x: 0, y: 0 }));
 
   // Setup simulation
   useEffect(() => {
@@ -166,7 +195,7 @@ export function DOMGraph({
         const charW = 7;
         const width = Math.max(64, label.length * charW + padding * 2);
         const height = 48 + padding * 2;
-        const svg = `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"${width}\" height=\"${height}\" viewBox=\"0 0 ${width} ${height}\">\n  <defs>\n    <filter id=\"glow\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\">\n      <feGaussianBlur stdDeviation=\"3\" result=\"coloredBlur\"/>\n      <feMerge>\n        <feMergeNode in=\"coloredBlur\"/>\n        <feMergeNode in=\"SourceGraphic\"/>\n      </feMerge>\n    </filter>\n  </defs>\n  <rect x=\"2\" y=\"2\" rx=\"10\" ry=\"10\" width=\"${width-4}\" height=\"${height-4}\" fill=\"rgba(255,255,255,0.06)\" stroke=\"${color}66\" stroke-width=\"1\" filter=\"url(#glow)\"/>\n  <text x=\"${width/2}\" y=\"${height/2}\" text-anchor=\"middle\" dominant-baseline=\"central\" font-family=\"ui-sans-serif, system-ui\" font-size=\"12\" fill=\"#e5e7eb\">${label}</text>\n</svg>`;
+        const svg = `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"${width}\" height=\"${height}\" viewBox=\"0 0 ${width} ${height}\">\n  <defs>\n    <filter id=\"glow\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\">\n      <feGaussianBlur stdDeviation=\"3\" result=\"coloredBlur\"/>\n      <feMerge>\n        <feMergeNode in=\"coloredBlur\"/>\n        <feMergeNode in=\"SourceGraphic\"/>\n      </feMerge>\n    </filter>\n  </defs>\n  <rect x=\"2\" y=\"2\" rx=\"10\" ry=\"10\" width=\"${width - 4}\" height=\"${height - 4}\" fill=\"rgba(255,255,255,0.06)\" stroke=\"${color}66\" stroke-width=\"1\" filter=\"url(#glow)\"/>\n  <text x=\"${width / 2}\" y=\"${height / 2}\" text-anchor=\"middle\" dominant-baseline=\"central\" font-family=\"ui-sans-serif, system-ui\" font-size=\"12\" fill=\"#e5e7eb\">${label}</text>\n</svg>`;
         const blob = new Blob([svg], { type: "image/svg+xml" });
         return URL.createObjectURL(blob);
       },
@@ -181,7 +210,7 @@ export function DOMGraph({
   // pan/zoom interactions
   const dragging = useRef<{ x: number; y: number } | null>(null);
   const onMouseDown = useCallback((e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest("[data-node-card]") ) return;
+    if ((e.target as HTMLElement).closest("[data-node-card]")) return;
     dragging.current = { x: e.clientX, y: e.clientY };
   }, []);
   const onMouseMove = useCallback((e: React.MouseEvent) => {
@@ -192,7 +221,9 @@ export function DOMGraph({
     setTx((t) => t + dx);
     setTy((t) => t + dy);
   }, []);
-  const onMouseUp = useCallback(() => { dragging.current = null; }, []);
+  const onMouseUp = useCallback(() => {
+    dragging.current = null;
+  }, []);
   const onWheel = useCallback((e: React.WheelEvent) => {
     const delta = e.deltaY < 0 ? 1.1 : 0.9;
     setK((prev) => Math.max(0.3, Math.min(3, prev * delta)));
@@ -201,7 +232,14 @@ export function DOMGraph({
   const transform = `translate(${tx}px, ${ty}px) scale(${k})`;
 
   return (
-    <div ref={containerRef} className="relative h-full w-full" onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onWheel={onWheel}>
+    <div
+      ref={containerRef}
+      className="relative h-full w-full"
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+      onWheel={onWheel}
+    >
       {/* SVG links layer */}
       <svg className="absolute inset-0" style={{ pointerEvents: "none" }}>
         <defs>
@@ -215,10 +253,23 @@ export function DOMGraph({
             const s = nodes.find((n) => n.id === (l.source as string));
             const t = nodes.find((n) => n.id === (l.target as string));
             if (!s || !t) return null;
-            const stroke = l.extra ? "url(#manualLinkGrad)" : (hoverId && (s.id === hoverId || t.id === hoverId) ? "#38bdf8" : "rgba(255,255,255,0.12)");
+            const stroke = l.extra
+              ? "url(#manualLinkGrad)"
+              : hoverId && (s.id === hoverId || t.id === hoverId)
+                ? "#38bdf8"
+                : "rgba(255,255,255,0.12)";
             const width = l.extra ? 2.5 : 1;
             return (
-              <line key={i} x1={s.x ?? 0} y1={s.y ?? 0} x2={t.x ?? 0} y2={t.y ?? 0} stroke={stroke} strokeWidth={width} opacity={l.extra ? 0.95 : 1} />
+              <line
+                key={i}
+                x1={s.x ?? 0}
+                y1={s.y ?? 0}
+                x2={t.x ?? 0}
+                y2={t.y ?? 0}
+                stroke={stroke}
+                strokeWidth={width}
+                opacity={l.extra ? 0.95 : 1}
+              />
             );
           })}
         </g>
@@ -232,30 +283,63 @@ export function DOMGraph({
           const left = (n.x ?? 0) - 60;
           const top = (n.y ?? 0) - 24;
           return (
-            <div key={n.id} className="absolute" style={{ left, top, perspective: 600 }}>
+            <div
+              key={n.id}
+              className="absolute"
+              style={{ left, top, perspective: 600 }}
+            >
               <motion.div
                 data-node-card
                 className="select-none rounded-lg border px-3 py-2 text-xs shadow-lg"
-                style={{ borderColor: `${color}66`, background: "rgba(255,255,255,0.06)", transformStyle: "preserve-3d" }}
+                style={{
+                  borderColor: `${color}66`,
+                  background: "rgba(255,255,255,0.06)",
+                  transformStyle: "preserve-3d",
+                }}
                 onMouseEnter={(e) => {
                   setHoverId(n.id);
                   onNodeHoverAction?.(n);
                   // compute tooltip info
                   try {
-                    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                    const rect = (
+                      e.currentTarget as HTMLElement
+                    ).getBoundingClientRect();
                     const v = getAtPath(value, n.path);
-                    const childCount = Array.isArray(v) ? v.length : (v && typeof v === 'object') ? Object.keys(v as object).length : 0;
-                    setTip({ open: true, x: rect.left + 8, y: rect.top - 8, type: n.type, children: childCount });
+                    const childCount = Array.isArray(v)
+                      ? v.length
+                      : v && typeof v === "object"
+                        ? Object.keys(v as object).length
+                        : 0;
+                    setTip({
+                      open: true,
+                      x: rect.left + 8,
+                      y: rect.top - 8,
+                      type: n.type,
+                      children: childCount,
+                    });
                   } catch {
-                    setTip({ open: true, x: 0, y: 0, type: n.type, children: undefined });
+                    setTip({
+                      open: true,
+                      x: 0,
+                      y: 0,
+                      type: n.type,
+                      children: undefined,
+                    });
                   }
                 }}
-                onMouseLeave={() => { setHoverId(null); onNodeHoverAction?.(null); setTip((t) => ({ ...t, open: false })); }}
+                onMouseLeave={() => {
+                  setHoverId(null);
+                  onNodeHoverAction?.(null);
+                  setTip((t) => ({ ...t, open: false }));
+                }}
                 onContextMenu={(e) => {
                   e.preventDefault();
                   const card = e.currentTarget as HTMLElement;
                   const rect = card.getBoundingClientRect();
-                  onNodeContextAction?.(n, { x: rect.left, y: rect.bottom + 6 });
+                  onNodeContextAction?.(n, {
+                    x: rect.left,
+                    y: rect.bottom + 6,
+                  });
                 }}
                 onTouchStart={(e) => {
                   if (!onNodeLongPressAction) return;
@@ -269,20 +353,46 @@ export function DOMGraph({
                   const startX = e.touches[0]?.clientX ?? 0;
                   const startY = e.touches[0]?.clientY ?? 0;
 
-                  const cancel = () => { window.clearTimeout(timer); target.removeEventListener('touchend', cancel as EventListener); target.removeEventListener('touchcancel', cancel as EventListener); target.removeEventListener('touchmove', move as EventListener); };
+                  const cancel = () => {
+                    window.clearTimeout(timer);
+                    target.removeEventListener(
+                      "touchend",
+                      cancel as EventListener,
+                    );
+                    target.removeEventListener(
+                      "touchcancel",
+                      cancel as EventListener,
+                    );
+                    target.removeEventListener(
+                      "touchmove",
+                      move as EventListener,
+                    );
+                  };
                   const move = (te: TouchEvent) => {
                     const x = te.touches[0]?.clientX ?? 0;
                     const y = te.touches[0]?.clientY ?? 0;
-                    const dx = x - startX, dy = y - startY;
-                    if (dx*dx + dy*dy > 10*10) {
+                    const dx = x - startX,
+                      dy = y - startY;
+                    if (dx * dx + dy * dy > 10 * 10) {
                       window.clearTimeout(timer);
                     }
                   };
-                  target.addEventListener('touchend', cancel as EventListener, { passive: true });
-                  target.addEventListener('touchcancel', cancel as EventListener, { passive: true });
-                  target.addEventListener('touchmove', move as EventListener, { passive: true });
+                  target.addEventListener("touchend", cancel as EventListener, {
+                    passive: true,
+                  });
+                  target.addEventListener(
+                    "touchcancel",
+                    cancel as EventListener,
+                    { passive: true },
+                  );
+                  target.addEventListener("touchmove", move as EventListener, {
+                    passive: true,
+                  });
                 }}
-                onClick={(e) => { e.stopPropagation(); if (linkModeActive && onNodePickAction) onNodePickAction(n); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (linkModeActive && onNodePickAction) onNodePickAction(n);
+                }}
                 whileHover={{ rotateX: 2, rotateY: -2, scale: 1.04 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
@@ -298,16 +408,27 @@ export function DOMGraph({
       {tip.open && (
         <Tooltip open={true}>
           <TooltipTrigger asChild>
-            <button className="invisible fixed size-2" style={{ left: tip.x, top: tip.y, position: 'fixed' }}>.</button>
+            <button
+              className="invisible fixed size-2"
+              style={{ left: tip.x, top: tip.y, position: "fixed" }}
+            >
+              .
+            </button>
           </TooltipTrigger>
-          <TooltipContent side="top" sideOffset={10} className="z-50 max-w-[240px] rounded-md border border-white/10 bg-background/70 px-3 py-2 text-xs text-foreground shadow-lg backdrop-blur supports-backdrop-filter:bg-background/60">
+          <TooltipContent
+            side="top"
+            sideOffset={10}
+            className="z-50 max-w-[240px] rounded-md border border-white/10 bg-background/70 px-3 py-2 text-xs text-foreground shadow-lg backdrop-blur supports-backdrop-filter:bg-background/60"
+          >
             <div className="flex items-center gap-3">
               <span className="text-muted-foreground">Type:</span>
               <span className="font-medium capitalize">{tip.type}</span>
             </div>
             <div className="mt-1 flex items-center gap-3">
               <span className="text-muted-foreground">Children:</span>
-              <span className="font-medium">{typeof tip.children === 'number' ? tip.children : 0}</span>
+              <span className="font-medium">
+                {typeof tip.children === "number" ? tip.children : 0}
+              </span>
             </div>
           </TooltipContent>
         </Tooltip>

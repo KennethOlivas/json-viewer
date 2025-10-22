@@ -7,9 +7,11 @@ import { ToolbarButton } from "@/components/Toolbar";
 import { toast } from "sonner";
 
 export default function ConvertPage() {
-  const [input, setInput] = useState<string>("{\n  \"hello\": \"world\"\n}");
+  const [input, setInput] = useState<string>('{\n  "hello": "world"\n}');
   const [output, setOutput] = useState<string>("");
-  const [format, setFormat] = useState<"json2yaml"|"yaml2json"|"json2csv"|"csv2json">("json2yaml");
+  const [format, setFormat] = useState<
+    "json2yaml" | "yaml2json" | "json2csv" | "csv2json"
+  >("json2yaml");
 
   const convert = () => {
     try {
@@ -41,7 +43,19 @@ export default function ConvertPage() {
     <div className="container mx-auto max-w-6xl px-4 py-6">
       <h1 className="mb-4 text-2xl font-semibold">Convert</h1>
       <div className="mb-3 flex items-center gap-2">
-  <select value={format} onChange={(e) => setFormat(e.target.value as "json2yaml"|"yaml2json"|"json2csv"|"csv2json")} className="rounded border bg-background px-3 py-2">
+        <select
+          value={format}
+          onChange={(e) =>
+            setFormat(
+              e.target.value as
+                | "json2yaml"
+                | "yaml2json"
+                | "json2csv"
+                | "csv2json",
+            )
+          }
+          className="rounded border bg-background px-3 py-2"
+        >
           <option value="json2yaml">JSON → YAML</option>
           <option value="yaml2json">YAML → JSON</option>
           <option value="json2csv">JSON → CSV</option>
@@ -50,8 +64,16 @@ export default function ConvertPage() {
         <ToolbarButton onClickAction={convert}>Convert</ToolbarButton>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        <textarea value={input} onChange={(e) => setInput(e.target.value)} className="h-[50vh] w-full resize-none rounded border bg-background p-3 font-mono text-sm" />
-        <textarea value={output} readOnly className="h-[50vh] w-full resize-none rounded border bg-muted/50 p-3 font-mono text-sm" />
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="h-[50vh] w-full resize-none rounded border bg-background p-3 font-mono text-sm"
+        />
+        <textarea
+          value={output}
+          readOnly
+          className="h-[50vh] w-full resize-none rounded border bg-muted/50 p-3 font-mono text-sm"
+        />
       </div>
     </div>
   );
