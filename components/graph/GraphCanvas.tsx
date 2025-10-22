@@ -323,17 +323,14 @@ export function GraphCanvas({
         let cx = 0,
           cy = 0;
         try {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const p = fg.graph2ScreenCoords?.(node as any);
+          const p = fg.graph2ScreenCoords?.(node as FGNode);
           if (p && typeof p.x === "number" && typeof p.y === "number") {
             cx = p.x;
             cy = p.y;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          } else if ((node as any).x && (node as any).y) {
+          } else if ((node as FGNode).x && (node as FGNode).y) {
             // fallback assumption: world coords approximate screen
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            cx = (node as any).x;
-            cy = (node as any).y;
+            cx = (node as FGNode).x as number;
+            cy = (node as FGNode).y as number;
           }
         } catch {}
         const cropW = w + margin * 2;
