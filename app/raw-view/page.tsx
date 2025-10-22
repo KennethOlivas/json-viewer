@@ -59,14 +59,18 @@ export default function RawViewPage() {
           <Save className="h-4 w-4" /> Save
         </ToolbarButton>
       </Toolbar>
-      <div className="mt-3">
+      <div className="mt-3 glass-panel p-2">
         <MonacoEditorClient
           value={text}
           onChangeAction={(v) => setText(v || "")}
           height="70vh"
         />
       </div>
-      {error && <div className="mt-2 text-sm text-red-600">{error}</div>}
+      {error && (
+        <div className="mt-2 glass-card border p-2 text-sm text-red-600">
+          {error}
+        </div>
+      )}
     </div>
   );
 }

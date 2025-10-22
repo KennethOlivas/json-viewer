@@ -290,7 +290,7 @@ export function DOMGraph({
             >
               <motion.div
                 data-node-card
-                className="select-none rounded-lg border px-3 py-2 text-xs shadow-lg"
+                className="select-none glass-card border px-3 py-2 text-xs shadow-lg"
                 style={{
                   borderColor: `${color}66`,
                   background: "rgba(255,255,255,0.06)",

@@ -19,7 +19,7 @@ export function FeatureCard({
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
       <VTLink href={href} className="block">
-        <Card className="h-full cursor-pointer border bg-card transition-colors">
+        <Card className="h-full cursor-pointer transition-colors">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Icon className="h-4 w-4" /> {title}

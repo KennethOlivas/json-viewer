@@ -36,6 +36,13 @@ export default function RootLayout({
           <JsonProvider>
             <ToastProvider />
             <div id="app-root" className="min-h-dvh pb-16">
+              {/* Dynamic glass background */}
+              <div aria-hidden className="dynamic-bg">
+                <div className="bg-glow a" />
+                <div className="bg-glow b" />
+                <div className="bg-glow c" />
+                <div className="bg-vignette" />
+              </div>
               <div className="sticky top-0 z-40 border-b border-white/10 bg-background/70 backdrop-blur supports-backdrop-filter:bg-background/60">
                 <SiteHeader />
               </div>

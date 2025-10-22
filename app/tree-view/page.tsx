@@ -52,14 +52,14 @@ export default function TreeViewPage() {
           <Save className="h-4 w-4" /> Save
         </ToolbarButton>
       </Toolbar>
-      <div className="mt-4 rounded border p-3">
+      <div className="mt-4 glass-panel p-3">
         {data ? (
           <JsonTree
             value={data as JSONValue}
             onChangeAction={handleNodeChange}
           />
         ) : (
-          <div className="text-muted-foreground">
+          <div className="glass-card border p-3 text-muted-foreground">
             No JSON loaded. Use Raw View or Formatter to input JSON.
           </div>
         )}
