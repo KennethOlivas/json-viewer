@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { forceCollide } from "d3-force";
 import type { JSONValue, JsonPath } from "@/lib/json";
+import { getAtPath } from "@/lib/json";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ForceGraph2D = dynamic(
   () => import("react-force-graph-2d").then((m) => m.default as unknown as React.ComponentType<unknown>),
@@ -91,6 +93,7 @@ export function GraphCanvas({
   onNodePickAction,
   onBackgroundClickAction,
   extraLinks,
+  onNodeLongPressAction,
 }: {
   value: JSONValue;
   onNodeContextAction?: (node: GraphNode, position: { x: number; y: number }) => void;
@@ -100,6 +103,7 @@ export function GraphCanvas({
   onNodePickAction?: (node: GraphNode) => void;
   onBackgroundClickAction?: () => void;
   extraLinks?: GraphLink[];
+  onNodeLongPressAction?: (node: GraphNode) => void;
 }) {
   const base = useMemo(() => toGraph(value), [value]);
   const data = useMemo(() => {
@@ -117,6 +121,10 @@ export function GraphCanvas({
   const graphRef = useRef<ForceGraphRef | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
+  const [tip, setTip] = useState<{ open: boolean; x: number; y: number; type?: string; children?: number }>({ open: false, x: 0, y: 0 });
+  const longPressTimer = useRef<number | null>(null);
+  const longPressFired = useRef(false);
+  const touchStartPoint = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (!graphRef.current || !onGraphRefAction) return;
@@ -207,6 +215,88 @@ export function GraphCanvas({
       // no-op if methods aren't available yet
     }
   }, [data]);
+
+  // Touch long-press detection to open a mobile-friendly sheet
+  useEffect(() => {
+    const el = containerRef.current?.querySelector('canvas');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const fg: any = graphRef.current;
+    if (!el || !fg) return;
+
+    const clearTimer = () => {
+      if (longPressTimer.current) {
+        window.clearTimeout(longPressTimer.current);
+        longPressTimer.current = null;
+      }
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (!onNodeLongPressAction) return;
+      if (e.touches.length !== 1) return;
+      longPressFired.current = false;
+      const t = e.touches[0];
+      touchStartPoint.current = { x: t.clientX, y: t.clientY };
+      clearTimer();
+      longPressTimer.current = window.setTimeout(() => {
+        try {
+          const rect = (el as HTMLCanvasElement).getBoundingClientRect();
+          const sx = (touchStartPoint.current?.x ?? 0) - rect.left;
+          const sy = (touchStartPoint.current?.y ?? 0) - rect.top;
+          if (typeof fg.screen2GraphCoords === 'function') {
+            const p = fg.screen2GraphCoords(sx, sy) as { x: number; y: number } | undefined;
+            if (p) {
+              // find closest node within threshold
+              const gd = fg.graphData && fg.graphData();
+              const nodes: Array<FGNode> = (gd?.nodes ?? []) as Array<FGNode>;
+              let best: FGNode | null = null;
+              let bestD = Infinity;
+              for (const n of nodes) {
+                const dx = (n.x ?? 0) - p.x;
+                const dy = (n.y ?? 0) - p.y;
+                const d2 = dx*dx + dy*dy;
+                if (d2 < bestD) { bestD = d2; best = n; }
+              }
+              // threshold radius ~12 world units
+              if (best && bestD <= 12*12) {
+                longPressFired.current = true;
+                e.preventDefault();
+                onNodeLongPressAction?.(best);
+              }
+            }
+          }
+        } catch {}
+      }, 500);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!touchStartPoint.current) return;
+      const t = e.touches[0];
+      const dx = t.clientX - touchStartPoint.current.x;
+      const dy = t.clientY - touchStartPoint.current.y;
+      if (dx*dx + dy*dy > 10*10) {
+        clearTimer();
+      }
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (longPressFired.current) {
+        e.preventDefault();
+      }
+      clearTimer();
+      touchStartPoint.current = null;
+    };
+
+    el.addEventListener('touchstart', onTouchStart, { passive: false });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    el.addEventListener('touchend', onTouchEnd, { passive: false });
+    el.addEventListener('touchcancel', onTouchEnd, { passive: false });
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart as EventListener);
+      el.removeEventListener('touchmove', onTouchMove as EventListener);
+      el.removeEventListener('touchend', onTouchEnd as EventListener);
+      el.removeEventListener('touchcancel', onTouchEnd as EventListener);
+    };
+  }, [onNodeLongPressAction]);
 
   const nodeCanvasObject = useCallback((node: FGNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
     const label = node.label;
@@ -315,6 +405,26 @@ export function GraphCanvas({
         onNodeHover={(node: FGNode | null) => {
           setHoverId(node?.id ?? null);
           onNodeHoverAction?.(node as GraphNode | null);
+          // Single tooltip rendering for performance
+          if (!node) { setTip((t) => ({ ...t, open: false })); return; }
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const fg: any = graphRef.current;
+            const canvas = containerRef.current?.querySelector('canvas');
+            const rect = canvas?.getBoundingClientRect();
+            const x = node.x ?? 0; const y = node.y ?? 0;
+            if (fg && typeof fg.graph2ScreenCoords === 'function' && rect) {
+              const p = fg.graph2ScreenCoords(x, y) as { x: number; y: number } | undefined;
+              if (p) {
+                // child count from JSON
+                const v = getAtPath(value, (node as GraphNode).path);
+                const childCount = Array.isArray(v) ? v.length : (v && typeof v === 'object') ? Object.keys(v as object).length : 0;
+                setTip({ open: true, x: rect.left + p.x + 8, y: rect.top + p.y - 16, type: node.type, children: childCount });
+              }
+            }
+          } catch {
+            // ignore
+          }
         }}
         onNodeClick={(node: FGNode) => {
           if (linkModeActive && onNodePickAction) {
@@ -358,6 +468,24 @@ export function GraphCanvas({
         }}
         onBackgroundClick={() => onBackgroundClickAction?.()}
       />
+      {/* Single mounted tooltip for performance */}
+      {tip.open && (
+        <Tooltip open={true}>
+          <TooltipTrigger asChild>
+            <button className="invisible fixed size-2" style={{ left: tip.x, top: tip.y, position: 'fixed' }}>.</button>
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={10} className="z-50 max-w-[240px] rounded-md border border-white/10 bg-background/70 px-3 py-2 text-xs text-foreground shadow-lg backdrop-blur supports-backdrop-filter:bg-background/60">
+            <div className="flex items-center gap-3">
+              <span className="text-muted-foreground">Type:</span>
+              <span className="font-medium capitalize">{tip.type}</span>
+            </div>
+            <div className="mt-1 flex items-center gap-3">
+              <span className="text-muted-foreground">Children:</span>
+              <span className="font-medium">{typeof tip.children === 'number' ? tip.children : 0}</span>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      )}
     </div>
   );
 }

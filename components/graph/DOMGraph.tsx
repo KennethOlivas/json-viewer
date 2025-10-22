@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSONValue, JsonPath } from "@/lib/json";
 import { forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from "d3-force";
 import { motion } from "framer-motion";
+import { getAtPath } from "@/lib/json";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export type DOMGraphNode = {
   id: string;
@@ -74,6 +76,7 @@ export type DOMGraphApi = {
 export function DOMGraph({
   value,
   onNodeContextAction,
+  onNodeLongPressAction,
   onNodeHoverAction,
   onGraphRefAction,
   linkModeActive,
@@ -83,6 +86,7 @@ export function DOMGraph({
 }: {
   value: JSONValue;
   onNodeContextAction?: (node: DOMGraphNode, position: { x: number; y: number }) => void;
+  onNodeLongPressAction?: (node: DOMGraphNode) => void;
   onNodeHoverAction?: (node: DOMGraphNode | null) => void;
   onGraphRefAction?: (api: DOMGraphApi) => void;
   linkModeActive?: boolean;
@@ -106,6 +110,7 @@ export function DOMGraph({
   const [ty, setTy] = useState(0);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [nodes, setNodes] = useState<DOMGraphNode[]>([]);
+  const [tip, setTip] = useState<{ open: boolean; x: number; y: number; type?: string; children?: number }>(() => ({ open: false, x: 0, y: 0 }));
 
   // Setup simulation
   useEffect(() => {
@@ -232,13 +237,50 @@ export function DOMGraph({
                 data-node-card
                 className="select-none rounded-lg border px-3 py-2 text-xs shadow-lg"
                 style={{ borderColor: `${color}66`, background: "rgba(255,255,255,0.06)", transformStyle: "preserve-3d" }}
-                onMouseEnter={() => { setHoverId(n.id); onNodeHoverAction?.(n); }}
-                onMouseLeave={() => { setHoverId(null); onNodeHoverAction?.(null); }}
+                onMouseEnter={(e) => {
+                  setHoverId(n.id);
+                  onNodeHoverAction?.(n);
+                  // compute tooltip info
+                  try {
+                    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                    const v = getAtPath(value, n.path);
+                    const childCount = Array.isArray(v) ? v.length : (v && typeof v === 'object') ? Object.keys(v as object).length : 0;
+                    setTip({ open: true, x: rect.left + 8, y: rect.top - 8, type: n.type, children: childCount });
+                  } catch {
+                    setTip({ open: true, x: 0, y: 0, type: n.type, children: undefined });
+                  }
+                }}
+                onMouseLeave={() => { setHoverId(null); onNodeHoverAction?.(null); setTip((t) => ({ ...t, open: false })); }}
                 onContextMenu={(e) => {
                   e.preventDefault();
                   const card = e.currentTarget as HTMLElement;
                   const rect = card.getBoundingClientRect();
                   onNodeContextAction?.(n, { x: rect.left, y: rect.bottom + 6 });
+                }}
+                onTouchStart={(e) => {
+                  if (!onNodeLongPressAction) return;
+                  const target = e.currentTarget as HTMLElement;
+                  // Start a long-press timer
+                  const timer = window.setTimeout(() => {
+                    try {
+                      onNodeLongPressAction?.(n);
+                    } catch {}
+                  }, 450);
+                  const startX = e.touches[0]?.clientX ?? 0;
+                  const startY = e.touches[0]?.clientY ?? 0;
+
+                  const cancel = () => { window.clearTimeout(timer); target.removeEventListener('touchend', cancel as EventListener); target.removeEventListener('touchcancel', cancel as EventListener); target.removeEventListener('touchmove', move as EventListener); };
+                  const move = (te: TouchEvent) => {
+                    const x = te.touches[0]?.clientX ?? 0;
+                    const y = te.touches[0]?.clientY ?? 0;
+                    const dx = x - startX, dy = y - startY;
+                    if (dx*dx + dy*dy > 10*10) {
+                      window.clearTimeout(timer);
+                    }
+                  };
+                  target.addEventListener('touchend', cancel as EventListener, { passive: true });
+                  target.addEventListener('touchcancel', cancel as EventListener, { passive: true });
+                  target.addEventListener('touchmove', move as EventListener, { passive: true });
                 }}
                 onClick={(e) => { e.stopPropagation(); if (linkModeActive && onNodePickAction) onNodePickAction(n); }}
                 whileHover={{ rotateX: 2, rotateY: -2, scale: 1.04 }}
@@ -251,6 +293,25 @@ export function DOMGraph({
           );
         })}
       </div>
+
+      {/* Single mounted tooltip for performance */}
+      {tip.open && (
+        <Tooltip open={true}>
+          <TooltipTrigger asChild>
+            <button className="invisible fixed size-2" style={{ left: tip.x, top: tip.y, position: 'fixed' }}>.</button>
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={10} className="z-50 max-w-[240px] rounded-md border border-white/10 bg-background/70 px-3 py-2 text-xs text-foreground shadow-lg backdrop-blur supports-backdrop-filter:bg-background/60">
+            <div className="flex items-center gap-3">
+              <span className="text-muted-foreground">Type:</span>
+              <span className="font-medium capitalize">{tip.type}</span>
+            </div>
+            <div className="mt-1 flex items-center gap-3">
+              <span className="text-muted-foreground">Children:</span>
+              <span className="font-medium">{typeof tip.children === 'number' ? tip.children : 0}</span>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      )}
     </div>
   );
 }
