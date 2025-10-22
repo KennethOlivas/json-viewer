@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Crosshair, Download, RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
+import { Crosshair, Download, Home, RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
+import { VTLink } from "@/components/VTLink";
 
 export function GraphToolbar({
   onZoomInAction,
@@ -59,6 +60,16 @@ export function GraphToolbar({
             </Button>
           </TooltipTrigger>
           <TooltipContent>Export PNG</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <VTLink href="/">
+              <Button size="icon" variant="secondary" aria-label="Home">
+                <Home className="size-4" />
+              </Button>
+            </VTLink>
+          </TooltipTrigger>
+          <TooltipContent>Home</TooltipContent>
         </Tooltip>
       </div>
     </TooltipProvider>
