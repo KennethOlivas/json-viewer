@@ -62,3 +62,46 @@ export function isObject(v: unknown): v is JSONObject {
 export function clone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v));
 }
+
+export type JsonPath = Array<string | number>;
+
+export function getAtPath(root: JSONValue, path: JsonPath): JSONValue | undefined {
+  let cur: unknown = root;
+  for (const key of path) {
+    if (Array.isArray(cur) && typeof key === "number") cur = cur[key];
+    else if (cur && typeof cur === "object" && typeof key === "string") cur = (cur as Record<string, unknown>)[key];
+    else return undefined;
+  }
+  return cur as JSONValue | undefined;
+}
+
+export function setAtPath(root: JSONValue, path: JsonPath, value: JSONValue): JSONValue {
+  const copy = clone(root);
+  let cur: unknown = copy;
+  for (let i = 0; i < path.length - 1; i++) {
+    const key = path[i];
+    if (Array.isArray(cur) && typeof key === "number") cur = cur[key];
+    else if (cur && typeof cur === "object" && typeof key === "string") cur = (cur as Record<string, unknown>)[key];
+    else return copy;
+  }
+  const last = path[path.length - 1];
+  if (Array.isArray(cur) && typeof last === "number") (cur as unknown[])[last] = value;
+  else if (cur && typeof cur === "object" && typeof last === "string") (cur as Record<string, unknown>)[last] = value;
+  return copy;
+}
+
+export function deleteAtPath(root: JSONValue, path: JsonPath): JSONValue {
+  if (path.length === 0) return root;
+  const copy = clone(root);
+  let cur: unknown = copy;
+  for (let i = 0; i < path.length - 1; i++) {
+    const key = path[i];
+    if (Array.isArray(cur) && typeof key === "number") cur = cur[key];
+    else if (cur && typeof cur === "object" && typeof key === "string") cur = (cur as Record<string, unknown>)[key];
+    else return copy;
+  }
+  const last = path[path.length - 1];
+  if (Array.isArray(cur) && typeof last === "number") (cur as unknown[]).splice(last, 1);
+  else if (cur && typeof cur === "object" && typeof last === "string") delete (cur as Record<string, unknown>)[last];
+  return copy;
+}

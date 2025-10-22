@@ -3,6 +3,7 @@
 A modern, animated JSON viewer/editor with routes for tree view, raw editor (Monaco), formatter, search, theme, sessions, compare, convert, and a basic graph view. Built with Next.js App Router, Tailwind CSS v4, ShadCN (Radix), and small utilities.
  
 ## Features
+
 - Tree View: inline edit, simple expand/collapse per node, keyboard undo/redo (Ctrl/Cmd+Z/Shift+Z)
 - Raw View: Monaco editor, Format/Minify/Copy, live parse errors
 - Formatter: pretty/minify with copy/reset
