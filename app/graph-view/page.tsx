@@ -398,69 +398,6 @@ export default function GraphViewPage() {
 
   return (
     <div className="relative w-full">
-      {/* Top bar */}
-      <div className="sticky top-0 z-30 border-b border-white/10 bg-background/70 backdrop-blur supports-backdrop-filter:bg-background/50">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <Drawer>
-              <DrawerTrigger className="mr-1 inline-flex items-center justify-center rounded-md p-2 md:hidden">
-                <Menu className="size-5" />
-              </DrawerTrigger>
-              <DrawerContent>
-                <div className="p-4">
-                  <nav className="grid gap-2">
-                    <VTLink href="/">Home</VTLink>
-                    <VTLink href="/tree-view">Tree</VTLink>
-                    <VTLink href="/raw-view">Raw</VTLink>
-                    <VTLink href="/graph-view">Graph</VTLink>
-                    <VTLink href="/compare">Compare</VTLink>
-                  </nav>
-                </div>
-              </DrawerContent>
-            </Drawer>
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <VTLink href="/">Home</VTLink>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <VTLink href="/tree-view">Tree</VTLink>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <VTLink href="/raw-view">Raw</VTLink>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <VTLink href="/graph-view">Graph</VTLink>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <VTLink href="/compare">Compare</VTLink>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Toggle
-              pressed={domMode}
-              onPressedChange={setDomMode}
-              aria-label="Toggle DOM mode"
-            >
-              DOM
-            </Toggle>
-          </div>
-        </div>
-      </div>
-
       {/* Canvas area */}
       <div
         ref={containerRef}

@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import { JsonProvider } from "@/providers/JsonProvider";
 import { BottomNav } from "@/components/BottomNav";
 import { ToastProvider } from "@/components/ToastProvider";
+import { SiteHeader } from "@/components/SiteHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,9 @@ export default function RootLayout({
           <JsonProvider>
             <ToastProvider />
             <div id="app-root" className="min-h-dvh pb-16">
+              <div className="sticky top-0 z-40 border-b border-white/10 bg-background/70 backdrop-blur supports-backdrop-filter:bg-background/60">
+                <SiteHeader />
+              </div>
               {children}
             </div>
             <BottomNav />
