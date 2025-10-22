@@ -16,7 +16,7 @@ const AnyForceGraph2D = ForceGraph2D as unknown as any;
 
 type GraphNode = {
   id: string;
-  label: string;
+  label: string; // includes key; for primitives may include value preview
   type: "object" | "array" | "string" | "number" | "boolean" | "null";
   path: JsonPath;
 };
@@ -50,6 +50,13 @@ function colorForType(type: GraphNode["type"]): string {
   }
 }
 
+function previewValue(v: JSONValue): string {
+  if (v === null) return "null";
+  if (typeof v === "string") return JSON.stringify(v);
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  return "";
+}
+
 function toGraph(root: JSONValue): GraphData {
   const nodes: GraphNode[] = [];
   const links: GraphLink[] = [];
@@ -63,7 +70,13 @@ function toGraph(root: JSONValue): GraphData {
       ? "object"
       : (typeof v as GraphNode["type"]);
     const id = path.join("/") || "root";
-    nodes.push({ id, label, type, path: [...path] });
+    // For primitives, append value preview to label
+    let display = label;
+    if (type === "string" || type === "number" || type === "boolean" || type === "null") {
+      const pv = previewValue(v);
+      display = path.length ? `${label}: ${pv}` : pv;
+    }
+    nodes.push({ id, label: display, type, path: [...path] });
     return id;
   };
 
@@ -106,18 +119,69 @@ export function GraphCanvas({
   onNodeLongPressAction?: (node: GraphNode) => void;
 }) {
   const base = useMemo(() => toGraph(value), [value]);
-  const data = useMemo(() => {
-    if (!extraLinks?.length) return base;
-    // attach extra flag so we can style them differently
-    const merged = {
-      nodes: base.nodes,
+  const buildData = useCallback((b: GraphData) => {
+    if (!extraLinks?.length) return b as { nodes: GraphNode[]; links: Array<GraphLink & { extra?: boolean }> };
+    return {
+      nodes: b.nodes,
       links: [
-        ...base.links,
+        ...b.links,
         ...extraLinks.map((l) => ({ ...l, extra: true as const })),
       ] as Array<GraphLink & { extra?: boolean }>,
     };
-    return merged;
-  }, [base, extraLinks]);
+  }, [extraLinks]);
+  const [graphData, setGraphData] = useState<{ nodes: GraphNode[]; links: Array<GraphLink & { extra?: boolean }> }>(() => buildData(base));
+  const [graphKey, setGraphKey] = useState(0);
+  const prevRef = useRef<{ nodes: GraphNode[]; links: Array<GraphLink & { extra?: boolean }> }>(graphData);
+
+  const sameStructure = useCallback((a: { nodes: GraphNode[]; links: Array<{ source: string; target: string }> }, b: { nodes: GraphNode[]; links: Array<{ source: string; target: string }> }) => {
+    if (a.nodes.length !== b.nodes.length || a.links.length !== b.links.length) return false;
+    const aIds = new Set(a.nodes.map(n => n.id));
+    const bIds = new Set(b.nodes.map(n => n.id));
+    if (aIds.size !== bIds.size) return false;
+    for (const id of aIds) if (!bIds.has(id)) return false;
+    const toKey = (l: { source: string; target: string }) => `${l.source}->${l.target}`;
+    const aL = new Set(a.links.map(toKey));
+    const bL = new Set(b.links.map(toKey));
+    if (aL.size !== bL.size) return false;
+    for (const k of aL) if (!bL.has(k)) return false;
+    return true;
+  }, []);
+
+  const mergePositions = useCallback((prev: { nodes: Array<GraphNode & { x?: number; y?: number; vx?: number; vy?: number; fx?: number; fy?: number }>; links: Array<GraphLink & { extra?: boolean }> }, next: { nodes: GraphNode[]; links: Array<GraphLink & { extra?: boolean }> }) => {
+    const pos = new Map(prev.nodes.map(n => [n.id, n]));
+    const nodes = next.nodes.map(n => {
+      const p = pos.get(n.id);
+      return p ? { ...n, x: p.x, y: p.y, vx: p.vx, vy: p.vy, fx: p.fx, fy: p.fy } : n;
+    });
+    return { nodes, links: next.links };
+  }, []);
+
+  // Update graph when value or extraLinks change
+  useEffect(() => {
+    const nextBase = toGraph(value);
+    const next = buildData(nextBase);
+    const prev = prevRef.current;
+    if (!sameStructure(prev, next)) {
+      // structural change: keep positions where possible and remount
+      const withPos = mergePositions(
+        prev as { nodes: Array<GraphNode & { x?: number; y?: number; vx?: number; vy?: number; fx?: number; fy?: number }>; links: Array<GraphLink & { extra?: boolean }> },
+        next
+      );
+      setGraphData(withPos);
+      setGraphKey(k => k + 1);
+    } else {
+      // only labels/values changed: keep positions and refresh
+      const withPos = mergePositions(
+        prev as { nodes: Array<GraphNode & { x?: number; y?: number; vx?: number; vy?: number; fx?: number; fy?: number }>; links: Array<GraphLink & { extra?: boolean }> },
+        next
+      );
+      setGraphData(withPos);
+      // request a redraw
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (graphRef.current as any)?.refresh?.();
+    }
+    prevRef.current = next;
+  }, [value, buildData, sameStructure, mergePositions]);
   const graphRef = useRef<ForceGraphRef | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
@@ -214,7 +278,7 @@ export function GraphCanvas({
     } catch {
       // no-op if methods aren't available yet
     }
-  }, [data]);
+  }, [graphData, graphKey]);
 
   // Touch long-press detection to open a mobile-friendly sheet
   useEffect(() => {
@@ -355,8 +419,9 @@ export function GraphCanvas({
   return (
     <div ref={containerRef} className="relative h-full w-full">
       <AnyForceGraph2D
+        key={graphKey}
         ref={graphRef}
-        graphData={data}
+        graphData={graphData}
         backgroundColor="#111111"
         linkColor={(l: { source: unknown; target: unknown; extra?: boolean }) => {
           if (l.extra) return "#22d3ee"; // cyan for manual links
