@@ -95,13 +95,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen bg-background font-sans flex-row">
-      {/* Soft gradient background */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-1/2 top-[-10%] h-72 w-72 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute right-[-10%] bottom-[-10%] h-80 w-80 rounded-full bg-secondary/40 blur-3xl dark:bg-secondary/20" />
-      </div>
-
+    <div className="relative min-h-dvh bg-background font-sans flex flex-col">
       {/* Header */}
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4">
         <Logo />
@@ -153,7 +147,7 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <main className="mx-auto w-full max-w-6xl px-4">
+  <main className="mx-auto w-full max-w-6xl px-4 flex-1">
         <section className="relative overflow-hidden rounded-xl border bg-card px-6 py-14 text-center md:px-12">
           <motion.h1
             className="mx-auto max-w-3xl text-3xl font-semibold tracking-tight md:text-4xl"
@@ -253,7 +247,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-14  py-8">
+  <footer className="mt-auto py-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-4 text-center text-sm md:flex-row md:text-left">
           <div className="text-muted-foreground">
             © {new Date().getFullYear()} JSON Studio
