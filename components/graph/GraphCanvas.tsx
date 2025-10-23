@@ -481,7 +481,7 @@ export function GraphCanvas({
 
   const nodeCanvasObject = useCallback(
     (node: FGNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const label = node.label;
+      let label = node.label;
       const color = colorForType(node.type);
       const fontSize = Math.max(8, 13 / globalScale);
       const x = node.x ?? 0;
@@ -491,8 +491,35 @@ export function GraphCanvas({
       const paddingX = 10 + 2 / globalScale;
       const paddingY = 6 + 1 / globalScale;
       ctx.font = `${fontSize}px ui-sans-serif, system-ui, -apple-system`;
-      const textWidth = ctx.measureText(label).width;
-      const width = Math.max(64, textWidth + paddingX * 2);
+      // Ellipsize label if too long for a max width
+      const MAX_CARD_WIDTH = 220; // px on canvas
+      const maxTextWidth = Math.max(32, MAX_CARD_WIDTH - paddingX * 2);
+      const measure = (t: string) => ctx.measureText(t).width;
+      const ellipsis = "...";
+      const trimToWidth = (t: string, maxW: number) => {
+        if (measure(t) <= maxW) return t;
+        const ellW = measure(ellipsis);
+        let low = 0;
+        let high = t.length;
+        let best = 0;
+        // Binary search to find max substring length that fits
+        while (low <= high) {
+          const mid = (low + high) >> 1;
+          const sub = t.slice(0, mid);
+          if (measure(sub) + ellW <= maxW) {
+            best = mid;
+            low = mid + 1;
+          } else {
+            high = mid - 1;
+          }
+        }
+        return t.slice(0, best) + ellipsis;
+      };
+      if (measure(label) > maxTextWidth) {
+        label = trimToWidth(label, maxTextWidth);
+      }
+      const textWidth = measure(label);
+      const width = Math.max(64, Math.min(MAX_CARD_WIDTH, textWidth + paddingX * 2));
       const height = 26 + paddingY * 2;
 
       // draw rounded rect helper
@@ -618,6 +645,7 @@ export function GraphCanvas({
           ctx.restore();
         }}
         linkDistance={80}
+        
         nodeRelSize={4}
         cooldownTicks={100}
         nodeCanvasObject={nodeCanvasObject}
@@ -724,7 +752,7 @@ export function GraphCanvas({
           <TooltipContent
             side="top"
             sideOffset={10}
-            className="z-50 max-w-[240px] rounded-md border border-white/10 bg-background/70 px-3 py-2 text-xs text-foreground shadow-lg backdrop-blur supports-backdrop-filter:bg-background/60"
+            className="z-50 max-w-60 rounded-md border border-white/10 bg-background/70 px-3 py-2 text-xs text-foreground shadow-lg backdrop-blur supports-backdrop-filter:bg-background/60"
           >
             <div className="flex items-center gap-3">
               <span className="text-muted-foreground">Type:</span>

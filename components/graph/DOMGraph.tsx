@@ -290,7 +290,7 @@ export function DOMGraph({
             >
               <motion.div
                 data-node-card
-                className="select-none glass-card border px-3 py-2 text-xs shadow-lg"
+                className="select-none glass-card border px-3 py-2 text-xs shadow-lg max-w-56"
                 style={{
                   borderColor: `${color}66`,
                   background: "rgba(255,255,255,0.06)",
@@ -396,7 +396,9 @@ export function DOMGraph({
                 whileHover={{ rotateX: 2, rotateY: -2, scale: 1.04 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
-                <div className="font-medium">{n.label}</div>
+                <div className="font-medium truncate whitespace-nowrap overflow-hidden">
+                  {n.label}
+                </div>
                 <div className="text-muted-foreground">{n.type}</div>
               </motion.div>
             </div>
@@ -418,7 +420,7 @@ export function DOMGraph({
           <TooltipContent
             side="top"
             sideOffset={10}
-            className="z-50 max-w-[240px] rounded-md border border-white/10 bg-background/70 px-3 py-2 text-xs text-foreground shadow-lg backdrop-blur supports-backdrop-filter:bg-background/60"
+            className="z-50 max-w-60 rounded-md border border-white/10 bg-background/70 px-3 py-2 text-xs text-foreground shadow-lg backdrop-blur supports-backdrop-filter:bg-background/60"
           >
             <div className="flex items-center gap-3">
               <span className="text-muted-foreground">Type:</span>
