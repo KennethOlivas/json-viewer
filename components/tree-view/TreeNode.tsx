@@ -2,13 +2,14 @@
 
 import { useMemo, useState, useCallback, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronDown, Pencil, Check, X, SquarePen } from "lucide-react";
+import { ChevronRight, ChevronDown, Pencil, Check, X, SquarePen, Copy, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { isObject, type JSONValue } from "@/lib/json";
 import { getType, parseLooseJSONValue } from "@/utils/json-validate";
 import { ObjectEditModal } from "./ObjectEditModal";
+import { toast } from "sonner";
 
 export type TreeNodePath = Array<string | number>;
 
@@ -33,6 +34,7 @@ export function TreeNode({
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState<string>("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalAddRow, setModalAddRow] = useState(false);
 
   const isObj = isObject(v) || Array.isArray(v);
   const dtype = useMemo(() => getType(v), [v]);
@@ -47,12 +49,27 @@ export function TreeNode({
     setEditing(true);
     setEditValue(typeof v === "string" ? v : JSON.stringify(v));
   };
+  const startAdd = () => {
+    if (!isObj) return;
+    setModalAddRow(true);
+    setModalOpen(true);
+  };
   const cancelEdit = () => setEditing(false);
   const saveEdit = () => {
     const parsed = parseLooseJSONValue(editValue);
     if (!parsed.ok) return; // parseLoose always ok unless empty
     onChangeAction(path, parsed.value);
     setEditing(false);
+  };
+
+  const copyValue = async () => {
+    try {
+      const text = typeof v === "string" ? v : JSON.stringify(v);
+      await navigator.clipboard.writeText(text);
+      toast.success("Copied value");
+    } catch {
+      toast.error("Failed to copy");
+    }
   };
 
   const delay = index * 0.04 + depth * 0.02;
@@ -109,6 +126,28 @@ export function TreeNode({
                 <Pencil className="h-3.5 w-3.5" />
               )}
             </Button>
+            <Button
+              size="icon-sm"
+              type="button"
+              onClick={copyValue}
+              className="ml-1 hidden rounded p-0 text-muted-foreground hover:bg-muted group-hover:inline-flex"
+              title="Copy value"
+              variant="ghost"
+            >
+              <Copy className="h-3.5 w-3.5" />
+            </Button>
+            {isObj ? (
+              <Button
+                size="icon-sm"
+                type="button"
+                onClick={startAdd}
+                className="ml-1 hidden rounded p-0 text-muted-foreground hover:bg-muted group-hover:inline-flex"
+                title={Array.isArray(v) ? "Add item" : "Add field"}
+                variant="ghost"
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
+            ) : null}
           </>
         ) : (
           <motion.span
@@ -162,10 +201,14 @@ export function TreeNode({
       {isObj && (
         <ObjectEditModal
           open={modalOpen}
-          onOpenChangeAction={setModalOpen}
+          onOpenChangeAction={(o) => {
+            setModalOpen(o);
+            if (!o) setModalAddRow(false);
+          }}
           initialValue={Array.isArray(v) ? (v as JSONValue[]) : (v as Record<string, JSONValue>)}
           onSaveAction={(nv) => onChangeAction(path, nv as JSONValue)}
           title={Array.isArray(v) ? "Edit Array" : `Edit ${String(k)}`}
+          autoAddRowOnOpen={modalAddRow}
         />
       )}
     </div>

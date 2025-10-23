@@ -31,6 +31,7 @@ export function ObjectEditModal({
   onSaveAction,
   title,
   fieldKey,
+  autoAddRowOnOpen,
 }: {
   open: boolean;
   onOpenChangeAction: (open: boolean) => void;
@@ -38,6 +39,7 @@ export function ObjectEditModal({
   onSaveAction: (value: Record<string, JSONValue> | JSONValue[]) => void;
   title?: string;
   fieldKey?: string;
+  autoAddRowOnOpen?: boolean;
 }) {
   const isArray = Array.isArray(initialValue);
   const [rows, setRows] = useState<Array<{ key: string; value: string }>>([]);
@@ -115,7 +117,13 @@ export function ObjectEditModal({
   };
 
   const startTransitionOpen = withViewTransition((v) => {
-    if (v) setRows(computeRows());
+    if (v) {
+      const base = computeRows();
+      const next = autoAddRowOnOpen
+        ? [...base, { key: isArray ? String(base.length) : "", value: "null" }]
+        : base;
+      setRows(next);
+    }
     onOpenChangeAction(v);
   });
 

@@ -5,11 +5,15 @@ import { formatJson, minifyJson } from "@/lib/json";
 import { Toolbar, ToolbarButton } from "@/components/Toolbar";
 import { Copy, Eraser, WandSparkles, Shrink } from "lucide-react";
 import { toast } from "sonner";
+import { useJson } from "@/providers/JsonProvider";
 
 export default function FormatterPage() {
+  const { data } = useJson();
+  
   const [input, setInput] = useState<string>(
-    '{\n  "foo": 1, "bar": [true, false]\n}',
+    data != null ? JSON.stringify(data, null, 2) : ""
   );
+
   const [output, setOutput] = useState<string>("");
 
   const pretty = () => {
