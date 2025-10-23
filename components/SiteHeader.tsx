@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Menu } from "lucide-react";
 import { navItems } from "@/const/navItem";
 import { Logo } from "@/components/Logo";
+import { JsonPreviewButton } from "@/components/JsonPreview";
 
 export function SiteHeader() {
   return (
@@ -31,6 +32,7 @@ export function SiteHeader() {
         ))}
       </nav>
       <div className="flex items-center gap-2">
+        <JsonPreviewButton />
         <ThemeToggle />
         <Sheet>
           <SheetTrigger asChild>
