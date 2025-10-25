@@ -83,7 +83,7 @@ export function SiteHeader() {
           </SheetTrigger>
           <SheetContent
             side="right"
-            className="w-72 max-h-[90vh] overflow-y-auto"
+            className="w-72 max-h-full overflow-y-auto"
           >
             <SheetHeader>
               <SheetTitle>Menu</SheetTitle>
