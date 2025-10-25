@@ -4,11 +4,15 @@ import { useState } from "react";
 import { useJson, type Session } from "@/providers/JsonProvider";
 import { Trash2, RotateCcw, Eye } from "lucide-react";
 import { SessionPreviewDialog } from "@/components/sessions/SessionPreviewDialog";
+import { DeleteSessionDialog } from "@/components/sessions/DeleteSessionDialog";
+import { toast } from "sonner";
 
 export default function SessionsPage() {
   const { sessions, restoreSession, deleteSession } = useJson();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selected, setSelected] = useState<Session | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [toDelete, setToDelete] = useState<Session | null>(null);
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-6">
@@ -42,14 +46,20 @@ export default function SessionsPage() {
               <button
                 type="button"
                 className="rounded border px-3 py-1 text-sm hover:bg-secondary"
-                onClick={() => restoreSession(s.id)}
+                onClick={() => {
+                  restoreSession(s.id);
+                  toast.success("Session restored");
+                }}
               >
                 <RotateCcw className="mr-1 inline-block h-4 w-4" /> Restore
               </button>
               <button
                 type="button"
                 className="rounded border px-3 py-1 text-sm text-red-600 hover:bg-secondary"
-                onClick={() => deleteSession(s.id)}
+                onClick={() => {
+                  setToDelete(s);
+                  setDeleteOpen(true);
+                }}
               >
                 <Trash2 className="mr-1 inline-block h-4 w-4" /> Delete
               </button>
@@ -65,6 +75,21 @@ export default function SessionsPage() {
           if (!o) setSelected(null);
         }}
         session={selected}
+      />
+      <DeleteSessionDialog
+        open={deleteOpen}
+        onOpenChangeAction={(o) => {
+          setDeleteOpen(o);
+          if (!o) setToDelete(null);
+        }}
+        sessionName={toDelete?.name}
+        onConfirmAction={() => {
+          if (!toDelete) return;
+          deleteSession(toDelete.id);
+          toast.success("Session deleted");
+          setDeleteOpen(false);
+          setToDelete(null);
+        }}
       />
     </div>
   );

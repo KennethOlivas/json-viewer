@@ -120,7 +120,7 @@ export const navCategories: NavCategory[] = [
         href: "/theme",
         label: "Theme",
         Icon: Palette,
-        description: "Toggle light/dark mode",
+        description: "Customize the appearance",
       },
       {
         href: "/sessions",

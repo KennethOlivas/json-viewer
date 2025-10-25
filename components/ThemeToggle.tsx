@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useTheme } from "next-themes";
-import { Palette, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -14,41 +14,54 @@ import {
 import { Button } from "@/components/ui/button";
 
 const customThemes = [
-  { id: "theme-high-contrast", label: "High contrast" },
-  { id: "theme-vscode", label: "VS Code" },
-  { id: "theme-pastel", label: "Pastel" },
-  { id: "theme-sunset", label: "Sunset" },
-  { id: "theme-forest", label: "Forest" },
-  { id: "theme-neon-purple", label: "Neon Purple" },
-  { id: "theme-cyberpunk", label: "Cyberpunk" },
-  { id: "theme-ocean", label: "Ocean" },
+  { id: "light", label: "Light", emoji: "☀️" },
+  { id: "dark", label: "Dark", emoji: "🌙" },
+  { id: "system", label: "System", emoji: "💻" },
+  { id: "theme-high-contrast", label: "High contrast", emoji: "🔳" },
+  { id: "theme-vscode", label: "VS Code", emoji: "🧩" },
+  { id: "theme-pastel", label: "Pastel", emoji: "🎨" },
+  { id: "theme-sunset", label: "Sunset", emoji: "🌅" },
+  { id: "theme-forest", label: "Forest", emoji: "🌲" },
+  { id: "theme-neon-purple", label: "Neon Purple", emoji: "💜" },
+  { id: "theme-cyberpunk", label: "Cyberpunk", emoji: "🤖" },
+  { id: "theme-ocean", label: "Ocean", emoji: "🌊" },
 ];
 
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
 
   const currentLabel = useMemo(() => {
-    if (theme === "system") return `System (${resolvedTheme ?? "light"})`;
-    if (theme === "light" || theme === "dark") return theme;
     const c = customThemes.find((t) => t.id === theme);
+    if (theme === "system") return `${c?.label ?? "System"} (${resolvedTheme ?? "light"})`;
     return c?.label ?? "Theme";
   }, [theme, resolvedTheme]);
+
+  const currentEmoji = useMemo(() => {
+    const c = customThemes.find((t) => t.id === theme);
+    return c?.emoji ?? "🎨";
+  }, [theme]);
 
   return (
     <div className="inline-flex items-center gap-1">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" aria-label="Select theme">
-            <Palette className="mr-2 h-4 w-4" /> {currentLabel}
+            <span className="mr-2" aria-hidden>
+              {currentEmoji}
+            </span>
+            {currentLabel}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="min-w-56">
-          <DropdownMenuLabel>Custom themes</DropdownMenuLabel>
+          <DropdownMenuLabel>Themes</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {customThemes.map((t) => (
             <DropdownMenuItem key={t.id} onClick={() => setTheme(t.id)}>
               <div className="flex w-full items-center justify-between">
-                <span>{t.label}</span>
+                <span className="inline-flex items-center gap-2">
+                  <span aria-hidden>{t.emoji}</span>
+                  <span>{t.label}</span>
+                </span>
                 {theme === t.id ? <Check className="h-4 w-4" /> : null}
               </div>
             </DropdownMenuItem>
