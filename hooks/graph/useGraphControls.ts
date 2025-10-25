@@ -9,14 +9,14 @@ export interface GraphApi {
   zoom: (k: number, ms?: number) => void;
   exportNodePng?: (
     nodeId: string,
-    opts?: { width?: number; height?: number; margin?: number }
+    opts?: { width?: number; height?: number; margin?: number },
   ) => string | undefined;
   exportNodeSvg?: (node: GraphNode, opts?: { padding?: number }) => string;
 }
 
 export function useGraphControls(
   containerRef: React.RefObject<HTMLDivElement | null>,
-  graphApiRef: React.RefObject<GraphApi | null>
+  graphApiRef: React.RefObject<GraphApi | null>,
 ) {
   const handleCenter = useCallback(() => {
     graphApiRef.current?.centerAt(0, 0, 600);
@@ -59,7 +59,7 @@ export function useGraphControls(
       a.download = `${node.label || "node"}.png`;
       a.click();
     },
-    [graphApiRef]
+    [graphApiRef],
   );
 
   const exportNodeSvg = useCallback(
@@ -72,7 +72,7 @@ export function useGraphControls(
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     },
-    [graphApiRef]
+    [graphApiRef],
   );
 
   return {

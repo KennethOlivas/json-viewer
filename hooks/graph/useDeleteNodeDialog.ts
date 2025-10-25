@@ -19,7 +19,10 @@ export function useDeleteNodeDialog() {
     setState({ open: true, node });
   }, []);
 
-  const closeDialog = useCallback(() => setState({ open: false, node: undefined }), []);
+  const closeDialog = useCallback(
+    () => setState({ open: false, node: undefined }),
+    [],
+  );
 
   const confirmDelete = useCallback(() => {
     const node = state.node;

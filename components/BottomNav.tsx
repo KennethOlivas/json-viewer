@@ -8,9 +8,9 @@ import { mobileNavItems } from "@/const/navItem";
 export function BottomNav() {
   const pathname = usePathname();
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60 md:hidden">
-      <ul className="mx-auto flex max-w-xl items-stretch justify-between gap-1 p-1">
-  {mobileNavItems.map(({ href, label, Icon }) => {
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60 md:hidden overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <ul className="mx-auto flex items-stretch justify-start gap-1 p-1 flex-nowrap min-w-max">
+        {mobileNavItems.map(({ href, label, Icon }) => {
           const active = pathname === href;
           return (
             <li key={href} className="flex-1">

@@ -15,7 +15,10 @@ import { EditValueDialog } from "@/components/graph/dialogs/EditValueDialog";
 import { EditKeyDialog } from "@/components/graph/dialogs/EditKeyDialog";
 import { AddChildDialog } from "@/components/graph/dialogs/AddChildDialog";
 import { DeleteConfirmDialog } from "@/components/graph/dialogs/DeleteConfirmDialog";
-import { useGraphControls, type GraphApi } from "@/hooks/graph/useGraphControls";
+import {
+  useGraphControls,
+  type GraphApi,
+} from "@/hooks/graph/useGraphControls";
 import { useGraphLinks } from "@/hooks/graph/useGraphLinks";
 import { useEditValueDialog } from "@/hooks/graph/useEditValueDialog";
 import { useEditKeyDialog } from "@/hooks/graph/useEditKeyDialog";
@@ -29,10 +32,23 @@ export default function GraphViewPage() {
   const { data } = useJson();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const graphApiRef = useRef<GraphApi | null>(null);
-  const [menu, setMenu] = useState<ContextMenuState>({ open: false, x: 0, y: 0 });
-  const { linkMode, extraLinks, startLinkMode, cancelLinkMode, pickLinkTarget } = useGraphLinks();
+  const [menu, setMenu] = useState<ContextMenuState>({
+    open: false,
+    x: 0,
+    y: 0,
+  });
+  const {
+    linkMode,
+    extraLinks,
+    startLinkMode,
+    cancelLinkMode,
+    pickLinkTarget,
+  } = useGraphLinks();
   const [domMode] = useState(false);
-  const [mobileSheet, setMobileSheet] = useState<{ open: boolean; node?: GraphNode }>({ open: false });
+  const [mobileSheet, setMobileSheet] = useState<{
+    open: boolean;
+    node?: GraphNode;
+  }>({ open: false });
 
   // Dialog hooks
   const editValue = useEditValueDialog();
@@ -42,9 +58,12 @@ export default function GraphViewPage() {
   // Graph controls
   const controls = useGraphControls(containerRef, graphApiRef);
 
-  const onNodeContext = useCallback((node: GraphNode, pos: { x: number; y: number }) => {
-    setMenu({ open: true, x: pos.x, y: pos.y, node });
-  }, []);
+  const onNodeContext = useCallback(
+    (node: GraphNode, pos: { x: number; y: number }) => {
+      setMenu({ open: true, x: pos.x, y: pos.y, node });
+    },
+    [],
+  );
 
   // Long-press from either renderer opens mobile sheet (handled inline below)
 
@@ -128,33 +147,45 @@ export default function GraphViewPage() {
   return (
     <div className="relative w-full">
       {/* Canvas area */}
-      <div ref={containerRef} className="relative h-[calc(100dvh-56px)] w-full overflow-hidden bg-linear-to-b from-[#0d0d0d] to-[#1a1a1a]">
+      <div
+        ref={containerRef}
+        className="relative h-[calc(100dvh-56px)] w-full overflow-hidden bg-linear-to-b from-[#0d0d0d] to-[#1a1a1a]"
+      >
         {!data && (
-          <div className="flex h-full items-center justify-center text-muted-foreground">Load JSON to visualize.</div>
+          <div className="flex h-full items-center justify-center text-muted-foreground">
+            Load JSON to visualize.
+          </div>
         )}
-        {data && (domMode ? (
-          <DOMGraph
-            value={data}
-            onNodeContextAction={(n, pos) => onNodeContext(n as unknown as GraphNode, pos)}
-            onGraphRefAction={handleDomGraphRef}
-            onNodeLongPressAction={(n) => handleNodeLongPress(n as unknown as GraphNode)}
-            linkModeActive={linkMode.active}
-            onNodePickAction={(n) => pickLinkTarget(n as unknown as GraphNode)}
-            onBackgroundClickAction={cancelLinkMode}
-            extraLinks={extraLinks}
-          />
-        ) : (
-          <GraphCanvas
-            value={data}
-            onNodeContextAction={onNodeContext}
-            onGraphRefAction={handleGraphRef}
-            onNodeLongPressAction={handleNodeLongPress}
-            linkModeActive={linkMode.active}
-            onNodePickAction={pickLinkTarget}
-            onBackgroundClickAction={cancelLinkMode}
-            extraLinks={extraLinks}
-          />
-        ))}
+        {data &&
+          (domMode ? (
+            <DOMGraph
+              value={data}
+              onNodeContextAction={(n, pos) =>
+                onNodeContext(n as unknown as GraphNode, pos)
+              }
+              onGraphRefAction={handleDomGraphRef}
+              onNodeLongPressAction={(n) =>
+                handleNodeLongPress(n as unknown as GraphNode)
+              }
+              linkModeActive={linkMode.active}
+              onNodePickAction={(n) =>
+                pickLinkTarget(n as unknown as GraphNode)
+              }
+              onBackgroundClickAction={cancelLinkMode}
+              extraLinks={extraLinks}
+            />
+          ) : (
+            <GraphCanvas
+              value={data}
+              onNodeContextAction={onNodeContext}
+              onGraphRefAction={handleGraphRef}
+              onNodeLongPressAction={handleNodeLongPress}
+              linkModeActive={linkMode.active}
+              onNodePickAction={pickLinkTarget}
+              onBackgroundClickAction={cancelLinkMode}
+              extraLinks={extraLinks}
+            />
+          ))}
 
         {/* Floating toolbar */}
         <GraphToolbar
@@ -269,7 +300,9 @@ export default function GraphViewPage() {
               addChild.setValueText(JSON.stringify(v));
             } catch {}
           }}
-          onQuote={() => addChild.setValueText(JSON.stringify(addChild.valueText))}
+          onQuote={() =>
+            addChild.setValueText(JSON.stringify(addChild.valueText))
+          }
           onUnquote={() => {
             try {
               const v = JSON.parse(addChild.valueText);

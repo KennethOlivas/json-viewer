@@ -52,7 +52,6 @@ export default function Home() {
 
   return (
     <div className="relative font-sans flex flex-col justify-between">
-
       {/* Hero */}
       <main className="mx-auto w-full max-w-6xl px-4 flex-1 mt-4">
         <section className="relative overflow-hidden rounded-xl border bg-card px-6 py-14 text-center md:px-12">
@@ -152,8 +151,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-    
     </div>
   );
 }

@@ -26,13 +26,18 @@ export function useEditKeyDialog() {
       const parentPath = node.path.slice(0, -1);
       const last = node.path[node.path.length - 1];
       const parent = getAtPath(data, parentPath);
-      if (!parent || typeof parent !== "object" || Array.isArray(parent) || typeof last !== "string") {
+      if (
+        !parent ||
+        typeof parent !== "object" ||
+        Array.isArray(parent) ||
+        typeof last !== "string"
+      ) {
         toast("Edit key is only available for object properties");
         return;
       }
       setState({ open: true, node, keyText: last });
     },
-    [data]
+    [data],
   );
 
   const closeDialog = useCallback(() => {
@@ -49,14 +54,23 @@ export function useEditKeyDialog() {
     const parentPath = node.path.slice(0, -1);
     const last = node.path[node.path.length - 1];
     const parent = getAtPath(data, parentPath) as Record<string, unknown>;
-    if (!parent || typeof parent !== "object" || Array.isArray(parent) || typeof last !== "string") return;
+    if (
+      !parent ||
+      typeof parent !== "object" ||
+      Array.isArray(parent) ||
+      typeof last !== "string"
+    )
+      return;
 
     const newKey = state.keyText.trim();
     if (!newKey) {
       toast.error("Key cannot be empty");
       return;
     }
-    if (Object.prototype.hasOwnProperty.call(parent, newKey) && newKey !== last) {
+    if (
+      Object.prototype.hasOwnProperty.call(parent, newKey) &&
+      newKey !== last
+    ) {
       toast.error("Key already exists");
       return;
     }

@@ -22,30 +22,64 @@ export function GraphMobileDrawer(props: GraphMobileDrawerProps) {
     <Drawer open={props.open} onOpenChange={props.onOpenChange}>
       <DrawerContent>
         <div className="mx-auto w-full max-w-md p-4">
-          <div className="mb-3 text-sm text-muted-foreground">{props.nodeLabel}</div>
+          <div className="mb-3 text-sm text-muted-foreground">
+            {props.nodeLabel}
+          </div>
           <div className="grid gap-2">
-            <Button variant="secondary" className="h-12 justify-start text-base" onClick={props.onCopyPath}>
+            <Button
+              variant="secondary"
+              className="h-12 justify-start text-base"
+              onClick={props.onCopyPath}
+            >
               Copy path
             </Button>
-            <Button variant="secondary" className="h-12 justify-start text-base" onClick={props.onEditKey}>
+            <Button
+              variant="secondary"
+              className="h-12 justify-start text-base"
+              onClick={props.onEditKey}
+            >
               Edit key
             </Button>
-            <Button variant="secondary" className="h-12 justify-start text-base" onClick={props.onEditValue}>
+            <Button
+              variant="secondary"
+              className="h-12 justify-start text-base"
+              onClick={props.onEditValue}
+            >
               Edit value
             </Button>
-            <Button variant="secondary" className="h-12 justify-start text-base" onClick={props.onAddChild}>
+            <Button
+              variant="secondary"
+              className="h-12 justify-start text-base"
+              onClick={props.onAddChild}
+            >
               Add child
             </Button>
-            <Button variant="secondary" className="h-12 justify-start text-base" onClick={props.onStartLinkMode}>
+            <Button
+              variant="secondary"
+              className="h-12 justify-start text-base"
+              onClick={props.onStartLinkMode}
+            >
               Link to node
             </Button>
-            <Button variant="secondary" className="h-12 justify-start text-base" onClick={props.onExportNodePng}>
+            <Button
+              variant="secondary"
+              className="h-12 justify-start text-base"
+              onClick={props.onExportNodePng}
+            >
               Export node PNG
             </Button>
-            <Button variant="secondary" className="h-12 justify-start text-base" onClick={props.onExportNodeSvg}>
+            <Button
+              variant="secondary"
+              className="h-12 justify-start text-base"
+              onClick={props.onExportNodeSvg}
+            >
               Export node SVG
             </Button>
-            <Button variant="destructive" className="h-12 justify-start text-base" onClick={props.onDelete}>
+            <Button
+              variant="destructive"
+              className="h-12 justify-start text-base"
+              onClick={props.onDelete}
+            >
               Delete
             </Button>
           </div>

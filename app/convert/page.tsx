@@ -9,7 +9,9 @@ import { useJson } from "@/providers/JsonProvider";
 
 export default function ConvertPage() {
   const { data } = useJson();
-  const [input, setInput] = useState<string>(data != null ? JSON.stringify(data, null, 2) : "");
+  const [input, setInput] = useState<string>(
+    data != null ? JSON.stringify(data, null, 2) : "",
+  );
   const [output, setOutput] = useState<string>("");
   const [format, setFormat] = useState<
     "json2yaml" | "yaml2json" | "json2csv" | "csv2json"

@@ -2,10 +2,24 @@
 
 import { useMemo, useState, useCallback, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronDown, Pencil, Check, X, SquarePen, Copy, Plus } from "lucide-react";
+import {
+  ChevronRight,
+  ChevronDown,
+  Pencil,
+  Check,
+  X,
+  SquarePen,
+  Copy,
+  Plus,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import { isObject, type JSONValue } from "@/lib/json";
 import { getType, parseLooseJSONValue } from "@/utils/json-validate";
 import { ObjectEditModal } from "./ObjectEditModal";
@@ -97,7 +111,9 @@ export function TreeNode({
         ) : (
           <span className="inline-block h-5 w-5" />
         )}
-        <span className="font-mono text-xs text-muted-foreground">{String(k)}</span>
+        <span className="font-mono text-xs text-muted-foreground">
+          {String(k)}
+        </span>
         {!editing ? (
           <>
             <TooltipProvider>
@@ -205,7 +221,11 @@ export function TreeNode({
             setModalOpen(o);
             if (!o) setModalAddRow(false);
           }}
-          initialValue={Array.isArray(v) ? (v as JSONValue[]) : (v as Record<string, JSONValue>)}
+          initialValue={
+            Array.isArray(v)
+              ? (v as JSONValue[])
+              : (v as Record<string, JSONValue>)
+          }
           onSaveAction={(nv) => onChangeAction(path, nv as JSONValue)}
           title={Array.isArray(v) ? "Edit Array" : `Edit ${String(k)}`}
           autoAddRowOnOpen={modalAddRow}
@@ -218,15 +238,20 @@ export function TreeNode({
 export function renderValue(v: JSONValue) {
   if (typeof v === "string")
     return (
-      <span className="text-emerald-600 dark:text-emerald-400">&quot;{v}&quot;</span>
+      <span className="text-emerald-600 dark:text-emerald-400">
+        &quot;{v}&quot;
+      </span>
     );
   if (typeof v === "number")
-    return <span className="text-blue-600 dark:text-blue-400">{String(v)}</span>;
+    return (
+      <span className="text-blue-600 dark:text-blue-400">{String(v)}</span>
+    );
   if (typeof v === "boolean")
     return (
       <span className="text-purple-600 dark:text-purple-400">{String(v)}</span>
     );
   if (v === null) return <span className="text-zinc-500">null</span>;
-  if (Array.isArray(v)) return <span className="text-zinc-500">Array[{v.length}]</span>;
+  if (Array.isArray(v))
+    return <span className="text-zinc-500">Array[{v.length}]</span>;
   return <span className="text-zinc-500">Object</span>;
 }

@@ -125,9 +125,14 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition:
+      background 0.3s ease,
+      color 0.3s ease;
   }
-  input, textarea, select, button {
+  input,
+  textarea,
+  select,
+  button {
     @apply transition-all duration-300;
   }
   /* Glassmorphic card default */
@@ -164,8 +169,12 @@
     color: var(--foreground);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 6px 20px rgba(0,0,0,0.15);
-    transition: transform 300ms, background-color 300ms;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.65),
+      0 6px 20px rgba(0, 0, 0, 0.15);
+    transition:
+      transform 300ms,
+      background-color 300ms;
   }
   .dark .glass-button {
     background: color-mix(in oklab, black 25%, transparent);
@@ -185,7 +194,7 @@
     background: color-mix(in oklab, white 20%, transparent);
     border: 1px solid color-mix(in oklab, white 40%, transparent);
     color: var(--foreground);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   }
   .dark .glass-tooltip {
     background: color-mix(in oklab, black 30%, transparent);
@@ -198,7 +207,7 @@
     border-radius: var(--radius-lg);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
   }
   .dark .glass-panel {
     background: color-mix(in oklab, black 25%, transparent);
@@ -220,23 +229,68 @@
     mix-blend-mode: screen;
     inset: auto;
   }
-  .bg-glow.a { background: radial-gradient(40% 40% at 50% 50%, #60a5fa55 0%, transparent 60%); width: 42rem; height: 42rem; left: -10rem; top: -6rem; animation: floatX 18s ease-in-out infinite alternate; }
-  .bg-glow.b { background: radial-gradient(40% 40% at 50% 50%, #22d3ee55 0%, transparent 60%); width: 36rem; height: 36rem; right: -8rem; top: 10%; animation: floatY 16s ease-in-out infinite alternate; }
-  .bg-glow.c { background: radial-gradient(40% 40% at 50% 50%, #f472b655 0%, transparent 60%); width: 48rem; height: 48rem; left: 20%; bottom: -12rem; animation: floatX 22s ease-in-out infinite alternate-reverse; }
+  .bg-glow.a {
+    background: radial-gradient(
+      40% 40% at 50% 50%,
+      #60a5fa55 0%,
+      transparent 60%
+    );
+    width: 42rem;
+    height: 42rem;
+    left: -10rem;
+    top: -6rem;
+    animation: floatX 18s ease-in-out infinite alternate;
+  }
+  .bg-glow.b {
+    background: radial-gradient(
+      40% 40% at 50% 50%,
+      #22d3ee55 0%,
+      transparent 60%
+    );
+    width: 36rem;
+    height: 36rem;
+    right: -8rem;
+    top: 10%;
+    animation: floatY 16s ease-in-out infinite alternate;
+  }
+  .bg-glow.c {
+    background: radial-gradient(
+      40% 40% at 50% 50%,
+      #f472b655 0%,
+      transparent 60%
+    );
+    width: 48rem;
+    height: 48rem;
+    left: 20%;
+    bottom: -12rem;
+    animation: floatX 22s ease-in-out infinite alternate-reverse;
+  }
 
   .bg-vignette {
     position: absolute;
     inset: 0;
-    background: radial-gradient(60% 60% at 50% 40%, transparent 0%, rgba(0,0,0,0.3) 100%);
+    background: radial-gradient(
+      60% 60% at 50% 40%,
+      transparent 0%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
     pointer-events: none;
   }
 }
 
 @keyframes floatX {
-  0% { transform: translateX(0) translateY(0); }
-  100% { transform: translateX(60px) translateY(-30px); }
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  100% {
+    transform: translateX(60px) translateY(-30px);
+  }
 }
 @keyframes floatY {
-  0% { transform: translateX(0) translateY(0); }
-  100% { transform: translateX(-40px) translateY(50px); }
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  100% {
+    transform: translateX(-40px) translateY(50px);
+  }
 }

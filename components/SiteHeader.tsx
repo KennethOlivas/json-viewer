@@ -18,9 +18,9 @@ import { JsonPreviewButton } from "@/components/JsonPreview";
 
 export function SiteHeader() {
   return (
-    <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4">
+    <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4">
       <Logo />
-      <nav className="hidden items-center gap-6 md:flex">
+      <nav className="hidden items-center gap-6 md:flex flex-nowrap overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {mobileNavItems.map((n) => (
           <VTLink
             key={n.href}
@@ -47,7 +47,10 @@ export function SiteHeader() {
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-72">
+          <SheetContent
+            side="right"
+            className="w-72 max-h-[90vh] overflow-y-auto"
+          >
             <SheetHeader>
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>

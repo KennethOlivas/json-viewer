@@ -3,7 +3,13 @@
 import { useCallback, useMemo, useState, startTransition } from "react";
 import type { GraphNode } from "@/components/graph/GraphCanvas";
 import { useJson } from "@/providers/JsonProvider";
-import { getAtPath, setAtPath, type JSONArray, type JSONObject, type JSONValue } from "@/lib/json-utils";
+import {
+  getAtPath,
+  setAtPath,
+  type JSONArray,
+  type JSONObject,
+  type JSONValue,
+} from "@/lib/json-utils";
 import { toast } from "sonner";
 
 interface State {
@@ -16,12 +22,19 @@ interface State {
 
 export function useAddChildDialog() {
   const { data, setData } = useJson();
-  const [state, setState] = useState<State>({ open: false, keyText: "", valueText: "" });
+  const [state, setState] = useState<State>({
+    open: false,
+    keyText: "",
+    valueText: "",
+  });
 
   const parentInfo = useMemo(() => {
     if (!state.node || !data) return { isObject: false, isArray: false };
     const v = getAtPath(data, state.node.path);
-    return { isObject: !!v && typeof v === "object" && !Array.isArray(v), isArray: Array.isArray(v) };
+    return {
+      isObject: !!v && typeof v === "object" && !Array.isArray(v),
+      isArray: Array.isArray(v),
+    };
   }, [data, state.node]);
 
   const openDialog = useCallback(
@@ -34,16 +47,31 @@ export function useAddChildDialog() {
         toast("Add child is only available for objects/arrays");
         return;
       }
-      setState({ open: true, node, keyText: "", valueText: "", error: undefined });
+      setState({
+        open: true,
+        node,
+        keyText: "",
+        valueText: "",
+        error: undefined,
+      });
     },
-    [data]
+    [data],
   );
 
   const closeDialog = useCallback(() => {
-    setState({ open: false, node: undefined, keyText: "", valueText: "", error: undefined });
+    setState({
+      open: false,
+      node: undefined,
+      keyText: "",
+      valueText: "",
+      error: undefined,
+    });
   }, []);
 
-  const setKeyText = useCallback((k: string) => setState((s) => ({ ...s, keyText: k })), []);
+  const setKeyText = useCallback(
+    (k: string) => setState((s) => ({ ...s, keyText: k })),
+    [],
+  );
   const setValueText = useCallback((v: string) => {
     try {
       JSON.parse(v);

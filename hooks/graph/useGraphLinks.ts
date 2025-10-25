@@ -36,14 +36,14 @@ export function useGraphLinks() {
         const exists = prev.some(
           (l) =>
             (l.source === src.id && l.target === node.id) ||
-            (l.source === node.id && l.target === src.id)
+            (l.source === node.id && l.target === src.id),
         );
         if (exists) return prev;
         return [...prev, { source: src.id, target: node.id }];
       });
       setLinkMode({ active: false });
     },
-    [linkMode]
+    [linkMode],
   );
 
   return {

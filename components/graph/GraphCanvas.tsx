@@ -519,7 +519,10 @@ export function GraphCanvas({
         label = trimToWidth(label, maxTextWidth);
       }
       const textWidth = measure(label);
-      const width = Math.max(64, Math.min(MAX_CARD_WIDTH, textWidth + paddingX * 2));
+      const width = Math.max(
+        64,
+        Math.min(MAX_CARD_WIDTH, textWidth + paddingX * 2),
+      );
       const height = 26 + paddingY * 2;
 
       // draw rounded rect helper
@@ -645,7 +648,6 @@ export function GraphCanvas({
           ctx.restore();
         }}
         linkDistance={80}
-        
         nodeRelSize={4}
         cooldownTicks={100}
         nodeCanvasObject={nodeCanvasObject}

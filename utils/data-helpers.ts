@@ -12,7 +12,11 @@ export function deepClone<T>(obj: T): T {
 
 export type Path = Array<string | number>;
 
-export function deepUpdateAtPath(root: JSONValue, path: Path, value: JSONValue): JSONValue {
+export function deepUpdateAtPath(
+  root: JSONValue,
+  path: Path,
+  value: JSONValue,
+): JSONValue {
   if (path.length === 0) return deepClone(value);
   if (Array.isArray(root)) {
     const idx = path[0];

@@ -25,7 +25,7 @@ export function useEditValueDialog() {
         typeof v === "string" ? JSON.stringify(v) : JSON.stringify(v, null, 2);
       setState({ open: true, node, text });
     },
-    [data]
+    [data],
   );
 
   const closeDialog = useCallback(() => {

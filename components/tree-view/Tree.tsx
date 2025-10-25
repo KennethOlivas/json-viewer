@@ -31,7 +31,11 @@ export function Tree({
             onChangeAction={onChangeAction}
           >
             {isObject(v) || Array.isArray(v) ? (
-              <Tree value={v} onChangeAction={(p, nv) => onChangeAction([i, ...p], nv)} depth={depth + 1} />
+              <Tree
+                value={v}
+                onChangeAction={(p, nv) => onChangeAction([i, ...p], nv)}
+                depth={depth + 1}
+              />
             ) : null}
           </TreeNode>
         ))}
@@ -53,7 +57,11 @@ export function Tree({
           onChangeAction={onChangeAction}
         >
           {isObject(v) || Array.isArray(v) ? (
-            <Tree value={v} onChangeAction={(p, nv) => onChangeAction([k, ...p], nv)} depth={depth + 1} />
+            <Tree
+              value={v}
+              onChangeAction={(p, nv) => onChangeAction([k, ...p], nv)}
+              depth={depth + 1}
+            />
           ) : null}
         </TreeNode>
       ))}

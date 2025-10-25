@@ -9,9 +9,9 @@ import { useJson } from "@/providers/JsonProvider";
 
 export default function FormatterPage() {
   const { data } = useJson();
-  
+
   const [input, setInput] = useState<string>(
-    data != null ? JSON.stringify(data, null, 2) : ""
+    data != null ? JSON.stringify(data, null, 2) : "",
   );
 
   const [output, setOutput] = useState<string>("");
