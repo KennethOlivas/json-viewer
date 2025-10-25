@@ -69,9 +69,20 @@ export function RandomJsonGenerator() {
   }, [editorText]);
 
   const onGenerate = useCallback(() => {
-    const obj = generateRandomJson(template);
+    // Auto-apply editor text (if valid) before generating so changes are reflected
+    let tpl: object = template;
+    if (isEditorValid) {
+      try {
+        const parsed = JSON.parse(editorText);
+        tpl = parsed as object;
+        setTemplate(parsed as object);
+      } catch {
+        // ignore, fallback to previous template
+      }
+    }
+    const obj = generateRandomJson(tpl);
     setOutput(obj as object);
-  }, [template]);
+  }, [editorText, isEditorValid, template]);
 
   const onImport = useCallback(() => {
     if (!output) {

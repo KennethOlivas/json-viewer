@@ -72,6 +72,61 @@ Example:
 | Array         | One random value from the array is selected.                       |
 | Nested Object | Recursively generates random values for each key.                  |
 
+### Advanced Rules (Text and Structure)
+
+You can use special rule objects to generate text and dynamic structures. These rules are recognized when the object contains certain required keys; some extra metadata keys are allowed alongside.
+
+1. Lorem ipsum text
+
+- Shapes:
+  - `{ "lorem": 5 }` → 5 words
+  - `{ "lorem": { "words": 5 } }`
+  - `{ "lorem": { "sentences": 2 } }`
+  - `{ "lorem": { "paragraphs": 3 } }`
+- Optional metadata allowed next to `lorem`: `capitalize: true`, `prefix: "["`, `suffix: "]"`, `separator: ", "` (when applicable)
+- Examples:
+
+```json
+{
+  "title": { "lorem": 7, "capitalize": true },
+  "subtitle": { "lorem": { "sentences": 1 }, "prefix": "(", "suffix": ")" },
+  "body": { "lorem": { "paragraphs": 2 } }
+}
+```
+
+2. Random object (dynamic keys)
+
+- Shape: `{ "randomObject": { "keys": number|{min,max,integer}, "keyLength?": number|{min,max,integer}, "keyCharset?": string, "value": template }, "keyPrefix?": string }`
+- Generates an object with N random keys and values derived from the `value` template
+- Defaults: `keyLength` 5–10, `keyCharset` a–z
+- Example:
+
+```json
+{
+  "attributes": {
+    "randomObject": {
+      "keys": { "min": 2, "max": 4 },
+      "keyLength": { "min": 4, "max": 8 },
+      "value": { "min": 1, "max": 100, "integer": true }
+    },
+    "keyPrefix": "k_"
+  }
+}
+```
+
+3. Repeat (arrays with count)
+
+- Shape: `{ "repeat": number|{min,max,integer}, "of": template, "joinWith?": string }`
+- Produces an array of generated items; if every item is a string and `joinWith` is provided, returns a single joined string
+- Examples:
+
+```json
+{
+  "tags": { "repeat": { "min": 3, "max": 6 }, "of": { "lorem": 1 } },
+  "slug": { "repeat": 4, "of": { "lorem": 1 }, "joinWith": "-" }
+}
+```
+
 ---
 
 ## 💾 Saving Templates
