@@ -49,7 +49,7 @@ export default function RootLayout({
               {children}
             </div>
             {/* Footer */}
-            <footer className="-mt-12">
+            <footer className="-mt-6">
               <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-4 text-center text-sm md:flex-row md:text-left">
                 <div className="text-muted-foreground">
                   © {new Date().getFullYear()} JSON Studio, Crafted by Kenneth
@@ -58,7 +58,7 @@ export default function RootLayout({
                 <div className="flex items-center gap-4">
                   <a
                     className="text-muted-foreground hover:text-foreground"
-                    href="https://github.com/"
+                    href="https://github.com/KennethOlivas/json-viewer"
                     target="_blank"
                     rel="noreferrer"
                   >
