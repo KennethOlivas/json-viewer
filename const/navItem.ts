@@ -43,3 +43,91 @@ export const mobileNavItems: MobileNavItem[] = [
   { href: "/convert", label: "Convert", Icon: Repeat2 },
   { href: "/graph-view", label: "Graph", Icon: Network },
 ];
+
+export type NavCategory = {
+  id: string;
+  title: string;
+  items: Array<MobileNavItem & { description?: string }>;
+};
+
+// Grouped navigation for the header NavigationMenu (with descriptions)
+export const navCategories: NavCategory[] = [
+  {
+    id: "views",
+    title: "Views",
+    items: [
+      {
+        href: "/",
+        label: "Home",
+        Icon: Home,
+        description: "Project overview and quick links",
+      },
+      {
+        href: "/tree-view",
+        label: "Tree",
+        Icon: TreeDeciduous,
+        description: "Browse JSON as an editable tree",
+      },
+      {
+        href: "/raw-view",
+        label: "Raw",
+        Icon: Code2,
+        description: "Edit raw JSON text",
+      },
+      {
+        href: "/formatter",
+        label: "Formatter",
+        Icon: Scissors,
+        description: "Format and tidy JSON",
+      },
+      {
+        href: "/graph-view",
+        label: "Graph",
+        Icon: Network,
+        description: "Visualize JSON as a graph",
+      },
+    ],
+  },
+  {
+    id: "tools",
+    title: "Tools",
+    items: [
+      {
+        href: "/search",
+        label: "Search",
+        Icon: Search,
+        description: "Search keys and values",
+      },
+      {
+        href: "/compare",
+        label: "Compare",
+        Icon: ArrowLeftRight,
+        description: "Diff two JSON documents",
+      },
+      {
+        href: "/convert",
+        label: "Convert",
+        Icon: Repeat2,
+        description: "Convert between formats",
+      },
+    ],
+  },
+  {
+    id: "settings",
+    title: "Settings",
+    items: [
+      {
+        href: "/theme",
+        label: "Theme",
+        Icon: Palette,
+        description: "Toggle light/dark mode",
+      },
+      {
+        href: "/sessions",
+        label: "Sessions",
+        Icon: Clock,
+        description: "Save and restore sessions",
+      },
+    ],
+  },
+];

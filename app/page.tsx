@@ -1,17 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { useJson } from "@/providers/JsonProvider";
-import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   TreeDeciduous,
@@ -22,33 +13,20 @@ import {
   Network,
 } from "lucide-react";
 import { FeatureCard } from "@/components/FeatureCard";
+import { JsonImportButton } from "@/components/JsonImportButton";
+import { OpenJsonButton } from "@/components/OpenJsonButton";
 
 export default function Home() {
   const featuresRef = useRef<HTMLDivElement | null>(null);
-  const [open, setOpen] = useState(false);
-  const [jsonText, setJsonText] = useState<string>('{\n  "hello": "world"\n}');
-  const { setData } = useJson();
+  // Using button components for dialogs; no local dialog state needed here
+  // Access to provider retained if future callbacks needed
+  const {} = useJson();
 
   const onExplore = () => {
     featuresRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const onFile = async (file?: File) => {
-    if (!file) return;
-    const text = await file.text();
-    setJsonText(text);
-  };
-
-  const onImport = () => {
-    try {
-      const parsed = JSON.parse(jsonText);
-      setData(parsed);
-      toast.success("JSON loaded");
-      setOpen(false);
-    } catch {
-      toast.error("Invalid JSON");
-    }
-  };
+  // Optional: use callbacks if needed in future for imported JSON
 
   return (
     <div className="relative font-sans flex flex-col justify-between">
@@ -77,37 +55,8 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.12 }}
           >
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger asChild>
-                <Button size="lg" className="w-full sm:w-auto">
-                  Open JSON
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-xl">
-                <DialogHeader>
-                  <DialogTitle>Open JSON</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-3">
-                  <input
-                    type="file"
-                    accept=".json,application/json"
-                    onChange={(e) => onFile(e.target.files?.[0])}
-                  />
-                  <textarea
-                    className="min-h-48 w-full resize-y rounded border bg-background p-3 font-mono text-sm"
-                    value={jsonText}
-                    onChange={(e) => setJsonText(e.target.value)}
-                    placeholder="Paste JSON here..."
-                  />
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={onImport}>Import</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <OpenJsonButton label="Open JSON" size="lg" variant="default" />
+            <JsonImportButton label="Import JSON" size="lg" variant="outline" />
             <Button
               size="lg"
               variant="secondary"

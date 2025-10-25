@@ -12,26 +12,58 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Menu } from "lucide-react";
-import { mobileNavItems } from "@/const/navItem";
+import { mobileNavItems, navCategories } from "@/const/navItem";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+} from "@/components/ui/navigation-menu";
 import { Logo } from "@/components/Logo";
 import { JsonPreviewButton } from "@/components/JsonPreview";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function SiteHeader() {
+  const isMobile = useIsMobile();
   return (
     <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4">
       <Logo />
-      <nav className="hidden items-center gap-6 md:flex flex-nowrap overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {mobileNavItems.map((n) => (
-          <VTLink
-            key={n.href}
-            href={n.href}
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <span className="inline-flex items-center gap-1 underline-offset-8 hover:underline">
-              <n.Icon className="h-4 w-4" /> {n.label}
-            </span>
-          </VTLink>
-        ))}
+      <nav className="hidden items-center gap-6 md:flex">
+        <NavigationMenu viewport={isMobile}>
+          <NavigationMenuList>
+            {navCategories.map((cat) => (
+              <NavigationMenuItem key={cat.id}>
+                <NavigationMenuTrigger>{cat.title}</NavigationMenuTrigger>
+                <NavigationMenuContent className="bg-background">
+                  <div className="p-2 md:w-[560px] lg:w-[720px]">
+                    <div className="grid grid-cols-2 gap-3 p-2 md:grid-cols-3">
+                      {cat.items.map((it) => (
+                        <NavigationMenuLink asChild key={it.href}>
+                          <VTLink
+                            href={it.href}
+                            className=" border flex w-full items-start gap-3 rounded-md p-2 transition-colors bg-background"
+                          >
+                            <it.Icon className="h-5 w-5 shrink-0" />
+                            <div className="flex flex-col">
+                              <span className="font-medium">{it.label}</span>
+                              {it.description ? (
+                                <span className="text-xs text-muted-foreground">
+                                  {it.description}
+                                </span>
+                              ) : null}
+                            </div>
+                          </VTLink>
+                        </NavigationMenuLink>
+                      ))}
+                    </div>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
       </nav>
       <div className="flex items-center gap-2">
         <JsonPreviewButton />
