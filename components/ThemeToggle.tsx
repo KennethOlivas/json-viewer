@@ -32,7 +32,8 @@ export function ThemeToggle() {
 
   const currentLabel = useMemo(() => {
     const c = customThemes.find((t) => t.id === theme);
-    if (theme === "system") return `${c?.label ?? "System"} (${resolvedTheme ?? "light"})`;
+    if (theme === "system")
+      return `${c?.label ?? "System"} (${resolvedTheme ?? "light"})`;
     return c?.label ?? "Theme";
   }, [theme, resolvedTheme]);
 

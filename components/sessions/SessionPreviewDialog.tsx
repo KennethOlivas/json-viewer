@@ -1,7 +1,14 @@
 "use client";
 
 import { useMemo } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Clipboard, Download } from "lucide-react";
@@ -17,7 +24,10 @@ export function SessionPreviewDialog({
   onOpenChangeAction: (open: boolean) => void;
   session: Pick<Session, "name" | "data"> | null;
 }) {
-  const jsonText = useMemo(() => (session?.data != null ? JSON.stringify(session.data, null, 2) : ""), [session]);
+  const jsonText = useMemo(
+    () => (session?.data != null ? JSON.stringify(session.data, null, 2) : ""),
+    [session],
+  );
 
   const copyJson = async () => {
     try {
@@ -47,11 +57,15 @@ export function SessionPreviewDialog({
       <DialogContent className="max-w-3xl glass-panel">
         <DialogHeader>
           <DialogTitle>Preview: {session?.name ?? "(untitled)"}</DialogTitle>
-          <DialogDescription>Read-only preview of this session&apos;s JSON.</DialogDescription>
+          <DialogDescription>
+            Read-only preview of this session&apos;s JSON.
+          </DialogDescription>
         </DialogHeader>
         <div className="mt-2">
           <ScrollArea className="h-[60vh] w-full rounded border border-white/10 bg-background/50 p-3">
-            <pre className="whitespace-pre-wrap wrap-break-word font-mono text-xs leading-5">{jsonText}</pre>
+            <pre className="whitespace-pre-wrap wrap-break-word font-mono text-xs leading-5">
+              {jsonText}
+            </pre>
           </ScrollArea>
         </div>
         <DialogFooter>

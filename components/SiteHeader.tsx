@@ -47,7 +47,9 @@ export function SiteHeader() {
                           >
                             <it.Icon className="h-5 w-5 shrink-0" />
                             <div className="flex flex-col">
-                              <span className="font-medium text-primary">{it.label}</span>
+                              <span className="font-medium text-primary">
+                                {it.label}
+                              </span>
                               {it.description ? (
                                 <span className="text-xs text-muted-foreground">
                                   {it.description}

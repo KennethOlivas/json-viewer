@@ -25,7 +25,9 @@ export function SavedTemplatesDialog({
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Saved templates</DialogTitle>
-          <DialogDescription>Load or delete a saved template.</DialogDescription>
+          <DialogDescription>
+            Load or delete a saved template.
+          </DialogDescription>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-auto">
           <TemplateList onSelectAction={onSelectAction} />

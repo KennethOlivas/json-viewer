@@ -66,7 +66,10 @@ export function RandomJsonToolbar({
           </Button>
         </div>
 
-        <div className="hidden md:block h-6 w-px bg-border" aria-hidden="true" />
+        <div
+          className="hidden md:block h-6 w-px bg-border"
+          aria-hidden="true"
+        />
 
         {/* Group: Editing */}
         <div className="flex items-center gap-2">
@@ -104,7 +107,10 @@ export function RandomJsonToolbar({
           </Button>
         </div>
 
-        <div className="hidden md:block h-6 w-px bg-border" aria-hidden="true" />
+        <div
+          className="hidden md:block h-6 w-px bg-border"
+          aria-hidden="true"
+        />
 
         {/* Group: Output */}
         <div className="flex items-center gap-2">
@@ -130,7 +136,10 @@ export function RandomJsonToolbar({
           </Button>
         </div>
 
-        <div className="hidden md:block h-6 w-px bg-border" aria-hidden="true" />
+        <div
+          className="hidden md:block h-6 w-px bg-border"
+          aria-hidden="true"
+        />
 
         {/* Group: Help */}
         <div className="flex items-center gap-2">

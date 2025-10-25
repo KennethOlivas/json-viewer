@@ -28,7 +28,9 @@ export function MonacoEditorClient({
     "theme-cyberpunk",
     "theme-forest",
   ]);
-  const editorTheme = darkThemes.has(effective || "light") ? "vs-dark" : "vs-light";
+  const editorTheme = darkThemes.has(effective || "light")
+    ? "vs-dark"
+    : "vs-light";
   return (
     <Monaco
       height={height}

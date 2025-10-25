@@ -53,7 +53,9 @@ export function OpenJsonButton({
 
   const duplicateName = useMemo(() => {
     if (!duplicateId) return "";
-    return sessions.find((s) => s.id === duplicateId)?.name || "Existing session";
+    return (
+      sessions.find((s) => s.id === duplicateId)?.name || "Existing session"
+    );
   }, [duplicateId, sessions]);
 
   const onFile = async (file?: File) => {
@@ -178,4 +180,3 @@ export function OpenJsonButton({
 }
 
 export default OpenJsonButton;
- 

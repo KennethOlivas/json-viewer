@@ -17,6 +17,7 @@ import { SaveTemplateDialog } from "@/components/random-json-generator/SaveTempl
 import { NewTemplateDialog } from "@/components/random-json-generator/NewTemplateDialog";
 import { HelpDialog } from "@/components/random-json-generator/HelpDialog";
 import { VirtualizedText } from "@/components/random-json-generator/VirtualizedText";
+import { getTemplates } from "@/utils/localStorageTemplates";
 
 const DEFAULT_TEMPLATE: object = {
   character: "Hero",
@@ -33,11 +34,11 @@ const DEFAULT_TEMPLATE: object = {
 export function RandomJsonGenerator() {
   const [template, setTemplate] = useState<object>(DEFAULT_TEMPLATE);
   const [editorText, setEditorText] = useState<string>(
-    JSON.stringify(DEFAULT_TEMPLATE, null, 2)
+    JSON.stringify(DEFAULT_TEMPLATE, null, 2),
   );
   const [output, setOutput] = useState<object | null>(null);
   const [currentTemplateId, setCurrentTemplateId] = useState<string | null>(
-    null
+    null,
   );
   const [currentTemplateName, setCurrentTemplateName] = useState<string>("");
   const [showTemplatesDialog, setShowTemplatesDialog] = useState(false);
@@ -49,10 +50,13 @@ export function RandomJsonGenerator() {
 
   const textOut = useMemo(
     () => (output ? JSON.stringify(output, null, 2) : ""),
-    [output]
+    [output],
   );
   const label = useMemo(
-    () => (currentTemplateName ? `Editing: ${currentTemplateName}` : "Unsaved template"),
+    () =>
+      currentTemplateName
+        ? `Editing: ${currentTemplateName}`
+        : "Unsaved template",
     [currentTemplateName],
   );
   const isEditorValid = useMemo(() => {
@@ -85,20 +89,23 @@ export function RandomJsonGenerator() {
     setTemplate(data);
   }, []);
 
-  const handleSave = useCallback((data: object) => {
-    if (currentTemplateId) {
-      const updated = updateTemplate(currentTemplateId, { data });
-      if (updated) {
-        toast.success(`Template updated: ${updated.name}`);
-      } else {
-        toast.error("Failed to update template");
+  const handleSave = useCallback(
+    (data: object) => {
+      if (currentTemplateId) {
+        const updated = updateTemplate(currentTemplateId, { data });
+        if (updated) {
+          toast.success(`Template updated: ${updated.name}`);
+        } else {
+          toast.error("Failed to update template");
+        }
+        return;
       }
-      return;
-    }
-  // No current template selected -> Save As
-  setPendingSaveData(data);
-  setShowSaveAsDialog(true);
-  }, [currentTemplateId]);
+      // No current template selected -> Save As
+      setPendingSaveData(data);
+      setShowSaveAsDialog(true);
+    },
+    [currentTemplateId],
+  );
 
   const onSelectTemplate = useCallback((t: SavedTemplate) => {
     if (t?.data && typeof t.data === "object") {
@@ -133,7 +140,10 @@ export function RandomJsonGenerator() {
       } else if (mod && e.key.toLowerCase() === "n") {
         e.preventDefault();
         setShowNewDialog(true);
-      } else if (mod && (e.key === "Enter")) {
+      } else if (mod && e.key.toLowerCase() === "o") {
+        e.preventDefault();
+        setShowTemplatesDialog(true);
+      } else if (mod && e.key === "Enter") {
         e.preventDefault();
         if (isEditorValid) {
           try {
@@ -204,11 +214,18 @@ export function RandomJsonGenerator() {
               <span
                 className={
                   "inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] " +
-                  (isEditorValid ? "bg-green-500/15 text-green-400" : "bg-red-500/15 text-red-400")
+                  (isEditorValid
+                    ? "bg-green-500/15 text-green-400"
+                    : "bg-red-500/15 text-red-400")
                 }
                 aria-live="polite"
               >
-                <span className={"size-2 rounded-full " + (isEditorValid ? "bg-green-400" : "bg-red-400")} />
+                <span
+                  className={
+                    "size-2 rounded-full " +
+                    (isEditorValid ? "bg-green-400" : "bg-red-400")
+                  }
+                />
                 {isEditorValid ? "Valid JSON" : "Invalid JSON"}
               </span>
             </div>
@@ -247,7 +264,30 @@ export function RandomJsonGenerator() {
         onOpenChangeAction={setShowSaveAsDialog}
         onSaveAction={(name) => {
           const data = pendingSaveData ?? template;
-          const saved = saveTemplate(name, data);
+          const trimmed = name.trim();
+          if (!trimmed) return;
+          const existing = getTemplates().find((t) => t.name === trimmed);
+          if (existing) {
+            const ok = window.confirm(
+              `A template named "${trimmed}" already exists. Overwrite it?`,
+            );
+            if (ok) {
+              const updated = updateTemplate(existing.id, { data });
+              if (updated) {
+                setCurrentTemplateId(updated.id);
+                setCurrentTemplateName(updated.name);
+                toast.success(`Template overwritten: ${updated.name}`);
+              } else {
+                toast.error("Failed to overwrite template");
+              }
+              setShowSaveAsDialog(false);
+              setPendingSaveData(null);
+              return;
+            }
+            // if user cancels overwrite, do nothing and keep dialog open
+            return;
+          }
+          const saved = saveTemplate(trimmed, data);
           setCurrentTemplateId(saved.id);
           setCurrentTemplateName(saved.name);
           toast.success(`Template saved: ${saved.name}`);
@@ -260,7 +300,28 @@ export function RandomJsonGenerator() {
         open={showNewDialog}
         onOpenChangeAction={setShowNewDialog}
         onCreateAction={(name) => {
-          const saved = saveTemplate(name, template);
+          const trimmed = name.trim();
+          if (!trimmed) return;
+          const existing = getTemplates().find((t) => t.name === trimmed);
+          if (existing) {
+            const ok = window.confirm(
+              `A template named "${trimmed}" already exists. Overwrite it?`,
+            );
+            if (ok) {
+              const updated = updateTemplate(existing.id, { data: template });
+              if (updated) {
+                setCurrentTemplateId(updated.id);
+                setCurrentTemplateName(updated.name);
+                toast.success(`Template overwritten: ${updated.name}`);
+              } else {
+                toast.error("Failed to overwrite template");
+              }
+              setShowNewDialog(false);
+              return;
+            }
+            return;
+          }
+          const saved = saveTemplate(trimmed, template);
           setCurrentTemplateId(saved.id);
           setCurrentTemplateName(saved.name);
           toast.success(`Created new template: ${saved.name}`);
