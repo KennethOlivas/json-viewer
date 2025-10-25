@@ -1,10 +1,14 @@
 "use client";
 
-import { useJson } from "@/providers/JsonProvider";
-import { Trash2, RotateCcw } from "lucide-react";
+import { useState } from "react";
+import { useJson, type Session } from "@/providers/JsonProvider";
+import { Trash2, RotateCcw, Eye } from "lucide-react";
+import { SessionPreviewDialog } from "@/components/sessions/SessionPreviewDialog";
 
 export default function SessionsPage() {
   const { sessions, restoreSession, deleteSession } = useJson();
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [selected, setSelected] = useState<Session | null>(null);
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-6">
@@ -28,6 +32,16 @@ export default function SessionsPage() {
               <button
                 type="button"
                 className="rounded border px-3 py-1 text-sm hover:bg-secondary"
+                onClick={() => {
+                  setSelected(s);
+                  setPreviewOpen(true);
+                }}
+              >
+                <Eye className="mr-1 inline-block h-4 w-4" /> Preview
+              </button>
+              <button
+                type="button"
+                className="rounded border px-3 py-1 text-sm hover:bg-secondary"
                 onClick={() => restoreSession(s.id)}
               >
                 <RotateCcw className="mr-1 inline-block h-4 w-4" /> Restore
@@ -43,6 +57,15 @@ export default function SessionsPage() {
           </li>
         ))}
       </ul>
+
+      <SessionPreviewDialog
+        open={previewOpen}
+        onOpenChangeAction={(o) => {
+          setPreviewOpen(o);
+          if (!o) setSelected(null);
+        }}
+        session={selected}
+      />
     </div>
   );
 }
