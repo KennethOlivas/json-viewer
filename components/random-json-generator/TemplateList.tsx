@@ -30,6 +30,11 @@ export function TemplateList({
             <li key={t.id} className="flex items-center justify-between rounded border p-2">
               <div>
                 <div className="text-sm font-medium">{t.name}</div>
+                <div className="text-[11px] text-muted-foreground">
+                  <span>Created: {new Date(t.createdAt).toLocaleString()}</span>
+                  <span className="mx-1">•</span>
+                  <span>Updated: {new Date(t.lastModified).toLocaleString()}</span>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="outline" onClick={() => onSelectAction(t)}>

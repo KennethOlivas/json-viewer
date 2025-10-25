@@ -17,6 +17,7 @@ JSON editing and views
 - Raw View: Monaco editor with adaptive theme (light/dark), format/minify/copy, live parse errors
 - Formatter: pretty/minify with copy/reset
 - Search: find by key/value with case sensitivity and match count
+- Random JSON Generator for mock data (see docs/random-json-generator.md)
 
 Import, preview, and sessions
 
@@ -85,6 +86,7 @@ pnpm build; pnpm start
 - /compare — side-by-side input with textual diff
 - /convert — JSON ↔ YAML ↔ CSV converter
 - /graph-view — basic visual cards (placeholder for interactive graph)
+- /random-json — random JSON generator
 
 ## Keyboard shortcuts
 
