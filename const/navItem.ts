@@ -10,6 +10,7 @@ import {
   ArrowLeftRight,
   Repeat2,
   Network,
+  Dice5,
 } from "lucide-react";
 
 export type NavItem = { href: string; label: string };
@@ -26,6 +27,7 @@ export const navItems: NavItem[] = [
   { href: "/compare", label: "Compare" },
   { href: "/convert", label: "Convert" },
   { href: "/graph-view", label: "Graph View" },
+  { href: "/random-json", label: "Random JSON" },
 ];
 
 export type MobileNavItem = { href: string; label: string; Icon: LucideIcon };
@@ -42,6 +44,7 @@ export const mobileNavItems: MobileNavItem[] = [
   { href: "/compare", label: "Compare", Icon: ArrowLeftRight },
   { href: "/convert", label: "Convert", Icon: Repeat2 },
   { href: "/graph-view", label: "Graph", Icon: Network },
+  { href: "/random-json", label: "Random", Icon: Dice5 },
 ];
 
 export type NavCategory = {
@@ -109,6 +112,12 @@ export const navCategories: NavCategory[] = [
         label: "Convert",
         Icon: Repeat2,
         description: "Convert between formats",
+      },
+      {
+        href: "/random-json",
+        label: "Random JSON",
+        Icon: Dice5,
+        description: "Generate random JSON from a template",
       },
     ],
   },
