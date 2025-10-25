@@ -38,7 +38,7 @@ export function SiteHeader() {
                 <NavigationMenuTrigger>{cat.title}</NavigationMenuTrigger>
                 <NavigationMenuContent className="bg-background">
                   <div className="p-2 md:w-[560px] lg:w-[720px]">
-                    <div className="grid grid-cols-2 gap-3 p-2 md:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-4 p-2 md:grid-cols-3">
                       {cat.items.map((it) => (
                         <NavigationMenuLink asChild key={it.href}>
                           <VTLink
@@ -47,7 +47,7 @@ export function SiteHeader() {
                           >
                             <it.Icon className="h-5 w-5 shrink-0" />
                             <div className="flex flex-col">
-                              <span className="font-medium">{it.label}</span>
+                              <span className="font-medium text-primary">{it.label}</span>
                               {it.description ? (
                                 <span className="text-xs text-muted-foreground">
                                   {it.description}
