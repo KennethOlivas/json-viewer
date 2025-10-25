@@ -49,7 +49,7 @@ export default function RootLayout({
               {children}
             </div>
             {/* Footer */}
-            <footer className="-mt-6">
+            <footer className="mt-6 md:-mt-6">
               <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-4 text-center text-sm md:flex-row md:text-left">
                 <div className="text-muted-foreground">
                   © {new Date().getFullYear()} JSON Studio, Crafted by Kenneth

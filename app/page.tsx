@@ -55,8 +55,18 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.12 }}
           >
-            <OpenJsonButton label="Open JSON" size="lg" variant="default" />
-            <JsonImportButton label="Import JSON" size="lg" variant="outline" />
+            <OpenJsonButton
+              label="Open JSON"
+              size="lg"
+              variant="default"
+              className="w-full sm:w-auto"
+            />
+            <JsonImportButton
+              label="Import JSON"
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto"
+            />
             <Button
               size="lg"
               variant="secondary"

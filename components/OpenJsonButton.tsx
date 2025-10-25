@@ -21,6 +21,7 @@ export function OpenJsonButton({
   label = "Open",
   size = "sm",
   variant = "outline",
+  className,
 }: {
   label?: string;
   size?: "sm" | "lg" | "default" | "icon";
@@ -31,6 +32,7 @@ export function OpenJsonButton({
     | "outline"
     | "ghost"
     | "link";
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [jsonText, setJsonText] = useState<string>(`{
@@ -109,7 +111,7 @@ export function OpenJsonButton({
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant={variant} size={size}>
+          <Button variant={variant} size={size} className={className}>
             <FileJson className="mr-2 size-4" /> {label}
           </Button>
         </DialogTrigger>

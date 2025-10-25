@@ -153,7 +153,7 @@ export function JsonImportDialog({
             <div className="px-1 py-1 text-xs text-muted-foreground">
               Preview
             </div>
-            <ScrollArea className="h-[60vh] w-full rounded border border-white/10 bg-background/50 p-3">
+            <ScrollArea className="h-[40vh] md:h-[60vh] w-full rounded border border-white/10 bg-background/50 p-3">
               <pre className="whitespace-pre-wrap wrap-break-word font-mono text-xs leading-5">
                 {jsonText || "No preview available yet."}
               </pre>

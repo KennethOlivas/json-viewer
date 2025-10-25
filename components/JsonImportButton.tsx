@@ -14,6 +14,7 @@ export function JsonImportButton({
   label = "Import",
   size = "sm",
   variant = "outline",
+  className,
 }: {
   label?: string;
   size?: "sm" | "lg" | "default" | "icon";
@@ -24,6 +25,7 @@ export function JsonImportButton({
     | "outline"
     | "ghost"
     | "link";
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [showUnsaved, setShowUnsaved] = useState(false);
@@ -86,7 +88,12 @@ export function JsonImportButton({
 
   return (
     <>
-      <Button variant={variant} size={size} onClick={() => setOpen(true)}>
+      <Button
+        variant={variant}
+        size={size}
+        onClick={() => setOpen(true)}
+        className={className}
+      >
         <FileJson className="mr-2 size-4" /> {label}
       </Button>
       <JsonImportDialog
