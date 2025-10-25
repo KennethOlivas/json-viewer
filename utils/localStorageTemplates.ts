@@ -23,7 +23,10 @@ export function getTemplates(): SavedTemplate[] {
         name: t.name as string,
         data: t.data,
         createdAt: (t.createdAt as string | undefined) ?? now,
-        lastModified: (t.lastModified as string | undefined) ?? (t.createdAt as string | undefined) ?? now,
+        lastModified:
+          (t.lastModified as string | undefined) ??
+          (t.createdAt as string | undefined) ??
+          now,
       }));
   } catch {
     return [];

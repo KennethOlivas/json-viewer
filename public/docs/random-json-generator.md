@@ -21,10 +21,10 @@ You can:
 
 The screen is divided into two main panels:
 
-| Panel | Description |
-| --- | --- |
+| Panel              | Description                                                                                      |
+| ------------------ | ------------------------------------------------------------------------------------------------ |
 | **Template Panel** | Where you edit the JSON template structure. Supports nested objects, arrays, and numeric ranges. |
-| **Output Panel** | Displays the generated random JSON results based on your template. |
+| **Output Panel**   | Displays the generated random JSON results based on your template.                               |
 
 At the top, a toolbar provides quick access to actions like generating, saving, or importing data.
 
@@ -32,14 +32,14 @@ At the top, a toolbar provides quick access to actions like generating, saving, 
 
 ## ⚙️ Toolbar Actions
 
-| Action | Description |
-| --- | --- |
-| 📁 Open Saved | Opens the saved templates dialog to select and load existing templates. |
-| ➕ New Template | Opens a dialog to create a new template from the current editor content. |
-| 🔄 Apply Template | Parses and applies the current editor text as the working template. Useful after manual edits. |
-| 💾 Save | Saves the current template. If none loaded, prompts for a name (Save As). |
-| 🎲 Generate JSON | Produces a random JSON object based on the current template. Output is shown in the right panel. |
-| ⬆️ Import JSON | Imports the generated JSON into the main JSON editor of the app. |
+| Action            | Description                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------ |
+| 📁 Open Saved     | Opens the saved templates dialog to select and load existing templates.                          |
+| ➕ New Template   | Opens a dialog to create a new template from the current editor content.                         |
+| 🔄 Apply Template | Parses and applies the current editor text as the working template. Useful after manual edits.   |
+| 💾 Save           | Saves the current template. If none loaded, prompts for a name (Save As).                        |
+| 🎲 Generate JSON  | Produces a random JSON object based on the current template. Output is shown in the right panel. |
+| ⬆️ Import JSON    | Imports the generated JSON into the main JSON editor of the app.                                 |
 
 ---
 
@@ -65,12 +65,12 @@ Example:
 
 ### Supported Rules
 
-| Field Type | Description |
-| --- | --- |
-| Static Value | Directly included in output as-is (e.g., "Hero"). |
-| Range Object | Defines numeric ranges using `min`, `max`, and optional `integer`. |
-| Array | One random value from the array is selected. |
-| Nested Object | Recursively generates random values for each key. |
+| Field Type    | Description                                                        |
+| ------------- | ------------------------------------------------------------------ |
+| Static Value  | Directly included in output as-is (e.g., "Hero").                  |
+| Range Object  | Defines numeric ranges using `min`, `max`, and optional `integer`. |
+| Array         | One random value from the array is selected.                       |
+| Nested Object | Recursively generates random values for each key.                  |
 
 ---
 

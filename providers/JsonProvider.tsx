@@ -165,28 +165,25 @@ export function JsonProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  const overwriteSessionData = useCallback(
-    (id: string, value: JSONValue) => {
-      const now = Date.now();
-      // update sessions list
-      setSessions((prev) => {
-        const next = prev.map((s) =>
-          s.id === id ? { ...s, data: clone(value), lastModified: now } : s,
-        );
-        setItem("sessions", next);
-        return next;
-      });
-      // activate and set current data, clear history
-      undoStack.current = [];
-      redoStack.current = [];
-      setHistoryCounts({ undo: 0, redo: 0 });
-      setDataState(value);
-      setItem("current", value);
-      setActiveSessionId(id);
-      setItem("activeSession", id);
-    },
-    [],
-  );
+  const overwriteSessionData = useCallback((id: string, value: JSONValue) => {
+    const now = Date.now();
+    // update sessions list
+    setSessions((prev) => {
+      const next = prev.map((s) =>
+        s.id === id ? { ...s, data: clone(value), lastModified: now } : s,
+      );
+      setItem("sessions", next);
+      return next;
+    });
+    // activate and set current data, clear history
+    undoStack.current = [];
+    redoStack.current = [];
+    setHistoryCounts({ undo: 0, redo: 0 });
+    setDataState(value);
+    setItem("current", value);
+    setActiveSessionId(id);
+    setItem("activeSession", id);
+  }, []);
 
   const restoreSession = useCallback(
     (id: string) => {
@@ -204,23 +201,26 @@ export function JsonProvider({ children }: { children: React.ReactNode }) {
     [sessions, setData],
   );
 
-  const deleteSession = useCallback((id: string) => {
-    setSessions((prev) => {
-      const next = prev.filter((x) => x.id !== id);
-      setItem("sessions", next);
-      if (activeSessionId === id) {
-        setActiveSessionId(null);
-        setItem("activeSession", null as unknown as string);
-        setDataState(null);
-        setItem("current", null as unknown as JSONValue);
-        // clear history when closing active
-        undoStack.current = [];
-        redoStack.current = [];
-        setHistoryCounts({ undo: 0, redo: 0 });
-      }
-      return next;
-    });
-  }, [activeSessionId]);
+  const deleteSession = useCallback(
+    (id: string) => {
+      setSessions((prev) => {
+        const next = prev.filter((x) => x.id !== id);
+        setItem("sessions", next);
+        if (activeSessionId === id) {
+          setActiveSessionId(null);
+          setItem("activeSession", null as unknown as string);
+          setDataState(null);
+          setItem("current", null as unknown as JSONValue);
+          // clear history when closing active
+          undoStack.current = [];
+          redoStack.current = [];
+          setHistoryCounts({ undo: 0, redo: 0 });
+        }
+        return next;
+      });
+    },
+    [activeSessionId],
+  );
 
   const renameSession = useCallback((id: string, name: string) => {
     setSessions((prev) => {
@@ -230,23 +230,26 @@ export function JsonProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const duplicateSession = useCallback((id: string) => {
-    const s = sessions.find((x) => x.id === id);
-    if (!s) return;
-    const now = Date.now();
-    const copy: Session = {
-      id: crypto.randomUUID(),
-      name: `${s.name} (copy ${new Date(now).toLocaleString()})`,
-      data: clone(s.data),
-      createdAt: now,
-      lastModified: now,
-    };
-    setSessions((prev) => {
-      const next = [copy, ...prev].slice(0, 50);
-      setItem("sessions", next);
-      return next;
-    });
-  }, [sessions]);
+  const duplicateSession = useCallback(
+    (id: string) => {
+      const s = sessions.find((x) => x.id === id);
+      if (!s) return;
+      const now = Date.now();
+      const copy: Session = {
+        id: crypto.randomUUID(),
+        name: `${s.name} (copy ${new Date(now).toLocaleString()})`,
+        data: clone(s.data),
+        createdAt: now,
+        lastModified: now,
+      };
+      setSessions((prev) => {
+        const next = [copy, ...prev].slice(0, 50);
+        setItem("sessions", next);
+        return next;
+      });
+    },
+    [sessions],
+  );
 
   const findDuplicateSessionId = useCallback(
     (value: JSONValue) => {
@@ -266,7 +269,9 @@ export function JsonProvider({ children }: { children: React.ReactNode }) {
   const dirty = useMemo(() => {
     if (!activeSession || data == null) return false;
     try {
-      return stableStringify(activeSession.data, 0) !== stableStringify(data, 0);
+      return (
+        stableStringify(activeSession.data, 0) !== stableStringify(data, 0)
+      );
     } catch {
       return true;
     }

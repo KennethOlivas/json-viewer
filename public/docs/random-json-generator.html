@@ -1,9 +1,17 @@
 <article>
   <h1>🧭 Random JSON Generator — User Manual</h1>
-  <p>This document explains how to use the Random JSON Generator feature in your app. It covers how to create, edit, save, and generate random JSON templates, as well as how to import results into the main JSON editor.</p>
+  <p>
+    This document explains how to use the Random JSON Generator feature in your
+    app. It covers how to create, edit, save, and generate random JSON
+    templates, as well as how to import results into the main JSON editor.
+  </p>
   <hr />
   <h2>🎯 Overview</h2>
-  <p>The Random JSON Generator allows users to design flexible JSON templates that can dynamically generate randomized data. It’s ideal for testing, mock data creation, and rapid prototyping.</p>
+  <p>
+    The Random JSON Generator allows users to design flexible JSON templates
+    that can dynamically generate randomized data. It’s ideal for testing, mock
+    data creation, and rapid prototyping.
+  </p>
   <ul>
     <li>Edit and preview JSON templates in real time.</li>
     <li>Generate randomized JSON based on the defined template.</li>
@@ -15,32 +23,90 @@
   <p>The screen is divided into two main panels:</p>
   <table>
     <thead>
-      <tr><th>Panel</th><th>Description</th></tr>
+      <tr>
+        <th>Panel</th>
+        <th>Description</th>
+      </tr>
     </thead>
     <tbody>
-      <tr><td><strong>Template Panel</strong></td><td>Where you edit the JSON template structure. Supports nested objects, arrays, and numeric ranges.</td></tr>
-      <tr><td><strong>Output Panel</strong></td><td>Displays the generated random JSON results based on your template.</td></tr>
+      <tr>
+        <td><strong>Template Panel</strong></td>
+        <td>
+          Where you edit the JSON template structure. Supports nested objects,
+          arrays, and numeric ranges.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Output Panel</strong></td>
+        <td>
+          Displays the generated random JSON results based on your template.
+        </td>
+      </tr>
     </tbody>
   </table>
-  <p>At the top, a toolbar provides quick access to actions like generating, saving, or importing data.</p>
+  <p>
+    At the top, a toolbar provides quick access to actions like generating,
+    saving, or importing data.
+  </p>
   <hr />
   <h2>⚙️ Toolbar Actions</h2>
   <table>
     <thead>
-      <tr><th>Action</th><th>Description</th></tr>
+      <tr>
+        <th>Action</th>
+        <th>Description</th>
+      </tr>
     </thead>
     <tbody>
-      <tr><td>📁 Open Saved</td><td>Opens the saved templates dialog to select and load existing templates.</td></tr>
-      <tr><td>➕ New Template</td><td>Opens a dialog to create a new template from the current editor content.</td></tr>
-      <tr><td>🔄 Apply Template</td><td>Parses and applies the current editor text as the working template. Useful after manual edits.</td></tr>
-      <tr><td>💾 Save</td><td>Saves the current template. If none loaded, prompts for a name (Save As).</td></tr>
-      <tr><td>🎲 Generate JSON</td><td>Produces a random JSON object based on the current template. Output is shown in the right panel.</td></tr>
-      <tr><td>⬆️ Import JSON</td><td>Imports the generated JSON into the main JSON editor of the app.</td></tr>
+      <tr>
+        <td>📁 Open Saved</td>
+        <td>
+          Opens the saved templates dialog to select and load existing
+          templates.
+        </td>
+      </tr>
+      <tr>
+        <td>➕ New Template</td>
+        <td>
+          Opens a dialog to create a new template from the current editor
+          content.
+        </td>
+      </tr>
+      <tr>
+        <td>🔄 Apply Template</td>
+        <td>
+          Parses and applies the current editor text as the working template.
+          Useful after manual edits.
+        </td>
+      </tr>
+      <tr>
+        <td>💾 Save</td>
+        <td>
+          Saves the current template. If none loaded, prompts for a name (Save
+          As).
+        </td>
+      </tr>
+      <tr>
+        <td>🎲 Generate JSON</td>
+        <td>
+          Produces a random JSON object based on the current template. Output is
+          shown in the right panel.
+        </td>
+      </tr>
+      <tr>
+        <td>⬆️ Import JSON</td>
+        <td>
+          Imports the generated JSON into the main JSON editor of the app.
+        </td>
+      </tr>
     </tbody>
   </table>
   <hr />
   <h2>🧱 Template Format</h2>
-  <p>Each template defines the structure and randomization rules for generating JSON objects.</p>
+  <p>
+    Each template defines the structure and randomization rules for generating
+    JSON objects.
+  </p>
   <pre><code>{
   "character": "Hero",
   "level": { "min": 1, "max": 10, "integer": true },
@@ -56,26 +122,52 @@
   <h3>Supported Rules</h3>
   <table>
     <thead>
-      <tr><th>Field Type</th><th>Description</th></tr>
+      <tr>
+        <th>Field Type</th>
+        <th>Description</th>
+      </tr>
     </thead>
     <tbody>
-      <tr><td>Static Value</td><td>Directly included in output as-is (e.g., "Hero").</td></tr>
-      <tr><td>Range Object</td><td>Defines numeric ranges using <code>min</code>, <code>max</code>, and optional <code>integer</code>.</td></tr>
-      <tr><td>Array</td><td>One random value from the array is selected.</td></tr>
-      <tr><td>Nested Object</td><td>Recursively generates random values for each key.</td></tr>
+      <tr>
+        <td>Static Value</td>
+        <td>Directly included in output as-is (e.g., "Hero").</td>
+      </tr>
+      <tr>
+        <td>Range Object</td>
+        <td>
+          Defines numeric ranges using <code>min</code>, <code>max</code>, and
+          optional <code>integer</code>.
+        </td>
+      </tr>
+      <tr>
+        <td>Array</td>
+        <td>One random value from the array is selected.</td>
+      </tr>
+      <tr>
+        <td>Nested Object</td>
+        <td>Recursively generates random values for each key.</td>
+      </tr>
     </tbody>
   </table>
   <hr />
   <h2>💾 Saving Templates</h2>
   <ol>
-    <li>If a template is loaded (you see its name), Save updates that template.</li>
+    <li>
+      If a template is loaded (you see its name), Save updates that template.
+    </li>
     <li>If no template is loaded, Save will prompt for a name (Save As).</li>
   </ol>
-  <p>To create a new copy at any time, use New Template and give it a name (this acts like Save As).</p>
+  <p>
+    To create a new copy at any time, use New Template and give it a name (this
+    acts like Save As).
+  </p>
   <p>Templates are stored in localStorage for future use.</p>
   <hr />
   <h2>📂 Loading Saved Templates</h2>
-  <p>Click Open Saved to access all previously stored templates. The dialog shows:</p>
+  <p>
+    Click Open Saved to access all previously stored templates. The dialog
+    shows:
+  </p>
   <ul>
     <li>Template name</li>
     <li>Creation and last updated date</li>
@@ -88,7 +180,10 @@
     <li>The output panel displays the randomized result.</li>
     <li>You can import it directly into the main editor.</li>
   </ol>
-  <p>If the template is invalid (e.g., broken JSON syntax), an error toast appears.</p>
+  <p>
+    If the template is invalid (e.g., broken JSON syntax), an error toast
+    appears.
+  </p>
   <hr />
   <h2>📤 Importing JSON into Editor</h2>
   <ul>
@@ -115,7 +210,8 @@
   <h2>🔒 Storage Details</h2>
   <ul>
     <li>Templates are stored under a specific localStorage key.</li>
-    <li>Each entry includes:
+    <li>
+      Each entry includes:
       <ul>
         <li><code>id</code> (UUID)</li>
         <li><code>name</code></li>
@@ -127,5 +223,9 @@
   </ul>
   <hr />
   <h2>🧠 Summary</h2>
-  <p>The Random JSON Generator streamlines creating reusable, flexible mock data templates with quick dialogs, clear toasts, and local persistence. It’s a fast, reliable way to generate JSON for testing and prototyping.</p>
+  <p>
+    The Random JSON Generator streamlines creating reusable, flexible mock data
+    templates with quick dialogs, clear toasts, and local persistence. It’s a
+    fast, reliable way to generate JSON for testing and prototyping.
+  </p>
 </article>
