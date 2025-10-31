@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Plus, Trash2, ArrowUp, ArrowDown, SquarePen } from "lucide-react";
 import { withViewTransition } from "@/utils/useModalAnimation";
+import { Label } from "@/components/ui/label";
 
 export function ObjectEditModal({
   open,
@@ -48,11 +49,20 @@ export function ObjectEditModal({
 }) {
   const isArray = Array.isArray(initialValue);
   const [rows, setRows] = useState<Array<{ key: string; value: string }>>([]);
+  const [justAddedIndex, setJustAddedIndex] = useState<number | null>(null);
   const [nestedOpen, setNestedOpen] = useState(false);
   const [nestedIdx, setNestedIdx] = useState<number | null>(null);
   const [nestedInit, setNestedInit] = useState<
     Record<string, JSONValue> | JSONValue[] | null
   >(null);
+  // Maintain a flat ordered list of input refs for keyboard navigation
+  const inputRefs = useRef<HTMLInputElement[]>([]);
+  const registerInput = (idx: number, part: "key" | "value", el: HTMLInputElement | null, isArrayLocal: boolean) => {
+    if (!el) return;
+    // For objects, order is key then value per row; for arrays, only value per row
+    const flatIndex = isArrayLocal ? idx : idx * 2 + (part === "value" ? 1 : 0);
+    inputRefs.current[flatIndex] = el;
+  };
   const errors = useMemo(() => {
     // Compute per-row errors and overall ability to save
     const rowErrs = rows.map(() => ({
@@ -98,6 +108,7 @@ export function ObjectEditModal({
       ...r,
       { key: isArray ? String(r.length) : "", value: "null" },
     ]);
+    setJustAddedIndex(rows.length);
   };
   const onRemove = (idx: number) => {
     setRows((r) => r.filter((_, i) => i !== idx));
@@ -134,15 +145,35 @@ export function ObjectEditModal({
   };
 
   const startTransitionOpen = withViewTransition((v) => {
-    if (v) {
-      const base = computeRows();
-      const next = autoAddRowOnOpen
-        ? [...base, { key: isArray ? String(base.length) : "", value: "null" }]
-        : base;
-      setRows(next);
-    }
     onOpenChangeAction(v);
   });
+
+  // Ensure rows are populated whenever the modal opens or the initial value changes
+  useEffect(() => {
+    if (!open) return;
+    const base = computeRows();
+    const next = autoAddRowOnOpen
+      ? [...base, { key: isArray ? String(base.length) : "", value: "null" }]
+      : base;
+    setRows(next);
+    setJustAddedIndex(autoAddRowOnOpen ? next.length - 1 : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initialValue]);
+
+  // Auto-focus behavior when adding a new row or opening with auto-add
+  useEffect(() => {
+    if (justAddedIndex === null) return;
+    const isObject = !isArray;
+    // Compute target ref index
+    const targetFlatIndex = isObject ? justAddedIndex * 2 : justAddedIndex;
+    const el = inputRefs.current[targetFlatIndex];
+    if (el && typeof el.focus === "function") {
+      // delay to ensure element is mounted
+      setTimeout(() => el.focus(), 0);
+    }
+    setJustAddedIndex(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows.length]);
 
   return (
     <>
@@ -155,7 +186,20 @@ export function ObjectEditModal({
             </DialogTitle>
           </DialogHeader>
           <div className="max-h-[65vh] overflow-auto pr-1">
-            <div className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-2">
+            {!isArray ? (
+              <div className="sticky top-0 z-10  backdrop-blur p-2 bg-background/20 mb-2 rounded-lg">
+                <div className="grid grid-cols-2 items-center gap-2">
+                  <Label className="text-xs text-muted-foreground font-semibold">Key</Label>
+                  <div className="flex items-center justify-between gap-2">
+                    <Label className="text-xs text-muted-foreground font-semibold">Value</Label>
+                    <Button variant="ghost" size="sm" onClick={onAdd}>
+                      <Plus className="h-4 w-4 mr-1" /> Add field
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+            <div className={`grid ${isArray ? "grid-cols-[auto_1fr_auto_auto]" : "grid-cols-2"} items-center gap-2`}>
               {rows.map((r, idx) => (
                 <motion.div
                   key={idx}
@@ -170,6 +214,24 @@ export function ObjectEditModal({
                     row={r}
                     error={errors.rowErrs[idx]}
                     totalRows={rows.length}
+                registerInput={registerInput}
+                onKeySubmit={(e) => {
+                  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                    e.preventDefault();
+                    if (errors.canSave) onSaveInternal();
+                    return;
+                  }
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    // Find current element in refs and move to next
+                    const flat = inputRefs.current;
+                    const currentIndex = flat.findIndex((el) => el === e.currentTarget);
+                    if (currentIndex >= 0) {
+                      const next = flat[currentIndex + 1];
+                      if (next) next.focus();
+                    }
+                  }
+                }}
                     onChange={(nr) =>
                       setRows((prev) =>
                         prev.map((p, i) => (i === idx ? nr : p)),
@@ -211,9 +273,11 @@ export function ObjectEditModal({
                 </motion.div>
               ))}
             </div>
-            <Button variant="ghost" size="sm" onClick={onAdd} className="mt-3">
-              <Plus className="h-4 w-4 mr-1" /> Add {isArray ? "item" : "field"}
-            </Button>
+            {isArray ? (
+              <Button variant="ghost" size="sm" onClick={onAdd} className="mt-3">
+                <Plus className="h-4 w-4 mr-1" /> Add item
+              </Button>
+            ) : null}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => onOpenChangeAction(false)}>
@@ -256,6 +320,8 @@ function Row({
   onMoveDown,
   onEditNested,
   totalRows,
+  registerInput,
+  onKeySubmit,
 }: {
   isArray: boolean;
   index: number;
@@ -267,6 +333,8 @@ function Row({
   onMoveDown: () => void;
   onEditNested: () => void;
   totalRows: number;
+  registerInput: (idx: number, part: "key" | "value", el: HTMLInputElement | null, isArrayLocal: boolean) => void;
+  onKeySubmit: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
   const type = useMemo(() => {
     try {
@@ -283,6 +351,8 @@ function Row({
           <Input
             value={row.key}
             onChange={(e) => onChange({ ...row, key: e.target.value })}
+            onKeyDown={onKeySubmit}
+            ref={(el) => registerInput(index, "key", el, false)}
             placeholder="Key"
             className={`glass-input ${error?.key ? "ring-1 ring-red-500/50" : ""}`}
           />
@@ -295,59 +365,123 @@ function Row({
           {index}
         </div>
       )}
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="flex flex-col gap-1">
-              <Input
-                value={row.value}
-                onChange={(e) => onChange({ ...row, value: e.target.value })}
-                placeholder={isArray ? "Value" : "Value (JSON)"}
-                className={`glass-input ${error?.value ? "ring-1 ring-red-500/50" : ""}`}
-              />
-              {error?.value ? (
-                <span className="text-xs text-red-500">{error.value}</span>
-              ) : null}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent className="glass-tooltip" side="top">
-            Type: {type}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <div className="flex items-center justify-end gap-1">
-        {(type === "object" || type === "array") && (
+      {isArray ? (
+        <>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex flex-col gap-1">
+                  <Input
+                    value={row.value}
+                    onChange={(e) => onChange({ ...row, value: e.target.value })}
+                    onKeyDown={onKeySubmit}
+                    ref={(el) => registerInput(index, "value", el, isArray)}
+                    placeholder="Value"
+                    className={`glass-input ${error?.value ? "ring-1 ring-red-500/50" : ""}`}
+                  />
+                  {error?.value ? (
+                    <span className="text-xs text-red-500">{error.value}</span>
+                  ) : null}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="glass-tooltip" side="top">
+                Type: {type}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </>
+      ) : (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={row.value}
+                    onChange={(e) => onChange({ ...row, value: e.target.value })}
+                    onKeyDown={onKeySubmit}
+                    ref={(el) => registerInput(index, "value", el, isArray)}
+                    placeholder="Value (JSON)"
+                    className={`glass-input flex-1 ${error?.value ? "ring-1 ring-red-500/50" : ""}`}
+                  />
+                  {(type === "object" || type === "array") && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={onEditNested}
+                      title="Edit nested"
+                    >
+                      <SquarePen className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onMoveUp}
+                    title="Move up"
+                    disabled={index === 0}
+                  >
+                    <ArrowUp className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onMoveDown}
+                    title="Move down"
+                    disabled={index === totalRows - 1}
+                  >
+                    <ArrowDown className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={onRemove} title="Remove">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                {error?.value ? (
+                  <span className="text-xs text-red-500">{error.value}</span>
+                ) : null}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="glass-tooltip" side="top">
+              Type: {type}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+      {isArray ? (
+        <div className="flex items-center justify-end gap-1">
+          {(type === "object" || type === "array") && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onEditNested}
+              title="Edit nested"
+            >
+              <SquarePen className="h-4 w-4" />
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"
-            onClick={onEditNested}
-            title="Edit nested"
+            onClick={onMoveUp}
+            title="Move up"
+            disabled={index === 0}
           >
-            <SquarePen className="h-4 w-4" />
+            <ArrowUp className="h-4 w-4" />
           </Button>
-        )}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onMoveUp}
-          title="Move up"
-          disabled={index === 0}
-        >
-          <ArrowUp className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onMoveDown}
-          title="Move down"
-          disabled={index === totalRows - 1}
-        >
-          <ArrowDown className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={onRemove} title="Remove">
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onMoveDown}
+            title="Move down"
+            disabled={index === totalRows - 1}
+          >
+            <ArrowDown className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={onRemove} title="Remove">
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ) : null}
     </>
   );
 }

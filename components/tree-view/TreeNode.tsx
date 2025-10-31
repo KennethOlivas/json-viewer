@@ -10,7 +10,6 @@ import {
   X,
   SquarePen,
   Copy,
-  Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,11 +62,7 @@ export function TreeNode({
     setEditing(true);
     setEditValue(typeof v === "string" ? v : JSON.stringify(v));
   };
-  const startAdd = () => {
-    if (!isObj) return;
-    setModalAddRow(true);
-    setModalOpen(true);
-  };
+
   const cancelEdit = () => setEditing(false);
   const saveEdit = () => {
     const parsed = parseLooseJSONValue(editValue);
@@ -152,18 +147,6 @@ export function TreeNode({
             >
               <Copy className="h-3.5 w-3.5" />
             </Button>
-            {isObj ? (
-              <Button
-                size="icon-sm"
-                type="button"
-                onClick={startAdd}
-                className="ml-1 hidden rounded p-0 text-muted-foreground hover:bg-muted group-hover:inline-flex"
-                title={Array.isArray(v) ? "Add item" : "Add field"}
-                variant="ghost"
-              >
-                <Plus className="h-3.5 w-3.5" />
-              </Button>
-            ) : null}
           </>
         ) : (
           <motion.span
