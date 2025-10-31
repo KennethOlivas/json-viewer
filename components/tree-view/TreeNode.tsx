@@ -91,7 +91,7 @@ export function TreeNode({
   return (
     <div className="pl-3">
       <motion.div
-        className="group flex items-center gap-1 py-0.5 text-sm rounded-md hover:bg-white/10 dark:hover:bg-white/5 transition-colors"
+        className="group flex items-center gap-1 py-0.5 h-8 text-sm rounded-md hover:bg-white/10 dark:hover:bg-white/5 transition-colors"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, delay }}
