@@ -37,11 +37,7 @@ export function deepUpdateAtPath(
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return (
-    value !== null &&
-    typeof value === "object" &&
-    !Array.isArray(value)
-  );
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 /**
@@ -55,7 +51,9 @@ export function addMissingFields(
   source: Record<string, unknown>,
 ): Record<string, unknown> {
   if (!isPlainObject(target) || !isPlainObject(source)) {
-    throw new TypeError("addMissingFields: both target and source must be plain objects");
+    throw new TypeError(
+      "addMissingFields: both target and source must be plain objects",
+    );
   }
   for (const [key, value] of Object.entries(source)) {
     if (!(key in target)) {
@@ -74,7 +72,9 @@ export function addMissingFieldsImmutable(
   source: Record<string, unknown>,
 ): Record<string, unknown> {
   if (!isPlainObject(target) || !isPlainObject(source)) {
-    throw new TypeError("addMissingFieldsImmutable: both target and source must be plain objects");
+    throw new TypeError(
+      "addMissingFieldsImmutable: both target and source must be plain objects",
+    );
   }
   let result: Record<string, unknown> | null = null;
   for (const [key, value] of Object.entries(source)) {

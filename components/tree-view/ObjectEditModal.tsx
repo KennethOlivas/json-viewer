@@ -57,7 +57,12 @@ export function ObjectEditModal({
   >(null);
   // Maintain a flat ordered list of input refs for keyboard navigation
   const inputRefs = useRef<HTMLInputElement[]>([]);
-  const registerInput = (idx: number, part: "key" | "value", el: HTMLInputElement | null, isArrayLocal: boolean) => {
+  const registerInput = (
+    idx: number,
+    part: "key" | "value",
+    el: HTMLInputElement | null,
+    isArrayLocal: boolean,
+  ) => {
     if (!el) return;
     // For objects, order is key then value per row; for arrays, only value per row
     const flatIndex = isArrayLocal ? idx : idx * 2 + (part === "value" ? 1 : 0);
@@ -189,9 +194,13 @@ export function ObjectEditModal({
             {!isArray ? (
               <div className="sticky top-0 z-10  backdrop-blur p-2 bg-background/20 mb-2 rounded-lg">
                 <div className="grid grid-cols-2 items-center gap-2">
-                  <Label className="text-xs text-muted-foreground font-semibold">Key</Label>
+                  <Label className="text-xs text-muted-foreground font-semibold">
+                    Key
+                  </Label>
                   <div className="flex items-center justify-between gap-2">
-                    <Label className="text-xs text-muted-foreground font-semibold">Value</Label>
+                    <Label className="text-xs text-muted-foreground font-semibold">
+                      Value
+                    </Label>
                     <Button variant="ghost" size="sm" onClick={onAdd}>
                       <Plus className="h-4 w-4 mr-1" /> Add field
                     </Button>
@@ -199,7 +208,9 @@ export function ObjectEditModal({
                 </div>
               </div>
             ) : null}
-            <div className={`grid ${isArray ? "grid-cols-[auto_1fr_auto_auto]" : "grid-cols-2"} items-center gap-2`}>
+            <div
+              className={`grid ${isArray ? "grid-cols-[auto_1fr_auto_auto]" : "grid-cols-2"} items-center gap-2`}
+            >
               {rows.map((r, idx) => (
                 <motion.div
                   key={idx}
@@ -214,24 +225,26 @@ export function ObjectEditModal({
                     row={r}
                     error={errors.rowErrs[idx]}
                     totalRows={rows.length}
-                registerInput={registerInput}
-                onKeySubmit={(e) => {
-                  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-                    e.preventDefault();
-                    if (errors.canSave) onSaveInternal();
-                    return;
-                  }
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    // Find current element in refs and move to next
-                    const flat = inputRefs.current;
-                    const currentIndex = flat.findIndex((el) => el === e.currentTarget);
-                    if (currentIndex >= 0) {
-                      const next = flat[currentIndex + 1];
-                      if (next) next.focus();
-                    }
-                  }
-                }}
+                    registerInput={registerInput}
+                    onKeySubmit={(e) => {
+                      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                        e.preventDefault();
+                        if (errors.canSave) onSaveInternal();
+                        return;
+                      }
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        // Find current element in refs and move to next
+                        const flat = inputRefs.current;
+                        const currentIndex = flat.findIndex(
+                          (el) => el === e.currentTarget,
+                        );
+                        if (currentIndex >= 0) {
+                          const next = flat[currentIndex + 1];
+                          if (next) next.focus();
+                        }
+                      }
+                    }}
                     onChange={(nr) =>
                       setRows((prev) =>
                         prev.map((p, i) => (i === idx ? nr : p)),
@@ -274,7 +287,12 @@ export function ObjectEditModal({
               ))}
             </div>
             {isArray ? (
-              <Button variant="ghost" size="sm" onClick={onAdd} className="mt-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onAdd}
+                className="mt-3"
+              >
                 <Plus className="h-4 w-4 mr-1" /> Add item
               </Button>
             ) : null}
@@ -333,7 +351,12 @@ function Row({
   onMoveDown: () => void;
   onEditNested: () => void;
   totalRows: number;
-  registerInput: (idx: number, part: "key" | "value", el: HTMLInputElement | null, isArrayLocal: boolean) => void;
+  registerInput: (
+    idx: number,
+    part: "key" | "value",
+    el: HTMLInputElement | null,
+    isArrayLocal: boolean,
+  ) => void;
   onKeySubmit: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
   const type = useMemo(() => {
@@ -373,7 +396,9 @@ function Row({
                 <div className="flex flex-col gap-1">
                   <Input
                     value={row.value}
-                    onChange={(e) => onChange({ ...row, value: e.target.value })}
+                    onChange={(e) =>
+                      onChange({ ...row, value: e.target.value })
+                    }
                     onKeyDown={onKeySubmit}
                     ref={(el) => registerInput(index, "value", el, isArray)}
                     placeholder="Value"
@@ -398,7 +423,9 @@ function Row({
                 <div className="flex items-center gap-2">
                   <Input
                     value={row.value}
-                    onChange={(e) => onChange({ ...row, value: e.target.value })}
+                    onChange={(e) =>
+                      onChange({ ...row, value: e.target.value })
+                    }
                     onKeyDown={onKeySubmit}
                     ref={(el) => registerInput(index, "value", el, isArray)}
                     placeholder="Value (JSON)"
@@ -432,7 +459,12 @@ function Row({
                   >
                     <ArrowDown className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={onRemove} title="Remove">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onRemove}
+                    title="Remove"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>

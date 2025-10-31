@@ -11,6 +11,7 @@ import {
   Repeat2,
   Network,
   Dice5,
+  Layers,
 } from "lucide-react";
 
 export type NavItem = { href: string; label: string };
@@ -27,6 +28,7 @@ export const navItems: NavItem[] = [
   { href: "/compare", label: "Compare" },
   { href: "/convert", label: "Convert" },
   { href: "/graph-view", label: "Graph View" },
+  { href: "/json-flow", label: "JSON Flow" },
   { href: "/random-json", label: "Random JSON" },
 ];
 
@@ -44,6 +46,7 @@ export const mobileNavItems: MobileNavItem[] = [
   { href: "/compare", label: "Compare", Icon: ArrowLeftRight },
   { href: "/convert", label: "Convert", Icon: Repeat2 },
   { href: "/graph-view", label: "Graph", Icon: Network },
+  { href: "/json-flow", label: "JSON Flow", Icon: Layers },
   { href: "/random-json", label: "Random", Icon: Dice5 },
 ];
 
@@ -88,6 +91,12 @@ export const navCategories: NavCategory[] = [
         label: "Graph",
         Icon: Network,
         description: "Visualize JSON as a graph",
+      },
+      {
+        href: "/json-flow",
+        label: "JSON Flow",
+        Icon: Layers,
+        description: "Design JSON structures with flow nodes",
       },
     ],
   },
