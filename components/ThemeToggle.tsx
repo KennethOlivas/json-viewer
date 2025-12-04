@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Check } from "lucide-react";
 import {
@@ -29,6 +29,12 @@ const customThemes = [
 
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch by only rendering after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const currentLabel = useMemo(() => {
     const c = customThemes.find((t) => t.id === theme);
@@ -41,6 +47,20 @@ export function ThemeToggle() {
     const c = customThemes.find((t) => t.id === theme);
     return c?.emoji ?? "🎨";
   }, [theme]);
+
+  // Render a placeholder button during SSR to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="inline-flex items-center gap-1">
+        <Button variant="outline" size="sm" aria-label="Select theme" disabled>
+          <span className="mr-2" aria-hidden>
+            🎨
+          </span>
+          Theme
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="inline-flex items-center gap-1">
